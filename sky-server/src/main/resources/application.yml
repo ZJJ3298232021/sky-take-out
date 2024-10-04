@@ -7,11 +7,11 @@ spring:
   main:
     allow-circular-references: true
   datasource:
-    druid:
-      driver-class-name: ${sky.datasource.driver-class-name}
-      url: jdbc:mysql://${sky.datasource.host}:${sky.datasource.port}/${sky.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-      username: ${sky.datasource.username}
-      password: ${sky.datasource.password}
+    driver-class-name: ${sky.datasource.driver-class-name}
+    url: jdbc:mysql://${sky.datasource.host}:${sky.datasource.port}/${sky.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${sky.datasource.username}
+    password: ${sky.datasource.password}
+    type: com.alibaba.druid.pool.DruidDataSource
 
 mybatis:
   #mapper配置文件
@@ -32,8 +32,45 @@ logging:
 sky:
   jwt:
     # 设置jwt签名加密时使用的秘钥
-    admin-secret-key: itcast
+    admin-secret-key: zank
     # 设置jwt过期时间
     admin-ttl: 7200000
     # 设置前端传递过来的令牌名称
     admin-token-name: token
+
+# springdoc-openapi项目访问访问地址: http://127.0.0.1:8080/doc.html
+springdoc:
+  swagger-ui:
+    path: /doc.html
+    # path: 配置swagger-ui.html/UI界面的访问路径,默认为/swagger-ui.html
+    tags-sorter: alpha
+    # tags-sorter: 接口文档中的tags排序规则,默认为alpha,可选值为alpha(按字母顺序排序)或as-is(按照在代码中定义的顺序排序)
+    operations-sorter: alpha
+    # operations-sorter: 接口文档中的接口排序规则,默认为alpha,可选值为alpha(按字母顺序排序)或method(按方法名称排序)
+
+  api-docs:
+    path: /v3/api-docs
+    # path: 配置api-docs的访问路径,默认为/v3/api-docs
+  group-configs:
+  # group-configs: 配置分组信息
+  - group: 'default'
+    # group: 分组名称
+    paths-to-match: '/**'
+    # paths-to-match: 配置要匹配的路径,默认为/**
+    packages-to-scan: com.sky.controller
+    # packages-to-scan: 配置要扫描的包的路径,直接配置为Controller类所在的包名即可
+
+# knife4j项目访问访问地址:http://127.0.0.1:8080/doc.html#/home
+knife4j:
+  enable: true
+  # 设置为true以启用Knife4j增强功能,这将再应用程序中启用Knife4j UI
+  setting:
+    # language: 设置Knife4j UI的语言,默认为zh_cn,可选值为zh_cn或en
+    language: zh_cn
+  #开启生产环境屏蔽
+  production: false
+  #是否启用登录认证
+  basic:
+    enable: true
+    username: zank
+    password: 200492
