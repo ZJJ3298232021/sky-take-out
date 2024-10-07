@@ -29,6 +29,13 @@ public class GlobalExceptionHandler {
         return Result.error(ex.getMessage());
     }
 
+    /**
+     * 处理SQL完整性约束违反异常的处理器方法
+     * 当数据库操作违反了完整性约束（如唯一约束）时，此方法将被调用
+     *
+     * @param ex SQL完整性约束违反异常对象，包含违反约束的详细信息
+     * @return 返回一个Result对象，包含处理结果或错误信息
+     */
     @ExceptionHandler
     public Result exceptionHandler(SQLIntegrityConstraintViolationException ex) {
         String message = ex.getMessage();

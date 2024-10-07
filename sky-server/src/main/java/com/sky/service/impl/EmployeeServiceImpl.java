@@ -1,16 +1,20 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
+import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.BeanUtils;
@@ -88,4 +92,22 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     }
 
+    /**
+     * 分页查询员工列表
+     *
+     * 本方法根据传入的分页查询参数，返回相应分页的员工列表
+     * 主要用于处理员工管理相关的业务需求，通过提供分页查询功能，以支持大量数据的高效检索
+     *
+     * @param pageQuery 分页查询员工的名称，包含页码、每页数量等分页参数
+     * @return 返回分页查询结果，包含当前页的员工列表以及总记录数等信息
+     */
+    @Override
+    public PageResult<Employee> pageQuery(EmployeePageQueryDTO pageQuery) {
+        PageHelper.startPage(pageQuery.getPage(),pageQuery.getPageSize());
+        Page<Employee> employees = employeeMapper.queryPage(pageQuery);
+        PageResult<Employee> pageResult = new PageResult<>();
+        pageResult.setTotal(employees.getTotal());
+        pageResult.setRecords(employees.getResult());
+        return pageResult;
+    }
 }
