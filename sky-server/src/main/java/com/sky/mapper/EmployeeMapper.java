@@ -48,4 +48,13 @@ public interface EmployeeMapper {
      * @param employee 要修改的员工对象，包含员工ID和其他属性
      */
     void update(Employee employee);
+
+    /**
+     * 根据id查询员工信息
+     *
+     * @param id 员工ID
+     * @return 返回员工对象，包含员工所有信息
+     */
+    @Select("select * from employee where id = #{id}")
+    Employee getById(Long id);
 }

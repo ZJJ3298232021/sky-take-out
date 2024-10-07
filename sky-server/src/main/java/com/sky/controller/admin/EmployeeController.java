@@ -104,11 +104,40 @@ public class EmployeeController {
         return Result.success(pageResult);
     }
 
+    /**
+     * 启用或禁用员工账号
+     * 该方法接收一个状态参数和一个员工ID，根据状态来启用或禁用员工账号
+     *
+     * @param status 员工账号的状态，用于判断是启用还是禁用
+     * @param id 员工的ID，用于标识需要操作的员工
+     * @return 返回一个成功的结果对象，表示操作成功
+     */
     @PostMapping("/status/{status}")
     @Operation(description = "启用禁用员工账号")
     public Result startOrStop(@PathVariable Integer status, Long id) {
         log.info("启用禁用员工账号：status:{} , id:{}", status, id);
         employeeService.startOrStop(status, id);
+        return Result.success();
+    }
+
+    /**
+     * 根据id查询员工信息
+     * @param id 员工id
+     * @return 返回员工信息
+     */
+    @GetMapping("/{id}")
+    @Operation(description = "根据id查询员工")
+    public Result<Employee> getById(@PathVariable Long id) {
+        log.info("根据id查询员工：{}", id);
+        Employee employee = employeeService.getById(id);
+        return Result.success(employee);
+    }
+
+    @PutMapping
+    @Operation(description = "修改员工信息")
+    public Result update(@RequestBody EmployeeDTO employeeDTO) {
+        log.info("修改员工信息：{}", employeeDTO);
+        employeeService.update(employeeDTO);
         return Result.success();
     }
 }
