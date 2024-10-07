@@ -12,7 +12,6 @@ import com.sky.service.EmployeeService;
 import com.sky.utils.JwtUtil;
 import com.sky.vo.EmployeeLoginVO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,5 +102,13 @@ public class EmployeeController {
         log.info("员工分页查询，参数：{}", pageQuery);
         PageResult<Employee> pageResult = employeeService.pageQuery(pageQuery);
         return Result.success(pageResult);
+    }
+
+    @PostMapping("/status/{status}")
+    @Operation(description = "启用禁用员工账号")
+    public Result startOrStop(@PathVariable Integer status, Long id) {
+        log.info("启用禁用员工账号：status:{} , id:{}", status, id);
+        employeeService.startOrStop(status, id);
+        return Result.success();
     }
 }

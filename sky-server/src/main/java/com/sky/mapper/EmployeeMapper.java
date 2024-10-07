@@ -3,10 +3,7 @@ package com.sky.mapper;
 import com.github.pagehelper.Page;
 import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface EmployeeMapper {
@@ -44,4 +41,11 @@ public interface EmployeeMapper {
      * @return 返回一个Page对象，包含分页显示的员工数据列表和分页信息，如总记录数、当前页码等
      */
     Page<Employee> queryPage(EmployeePageQueryDTO pageQuery);
+
+    /**
+     * 根据id修改员工信息
+     *
+     * @param employee 要修改的员工对象，包含员工ID和其他属性
+     */
+    void update(Employee employee);
 }

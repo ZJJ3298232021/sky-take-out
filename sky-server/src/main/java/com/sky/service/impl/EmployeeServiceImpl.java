@@ -20,7 +20,6 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
 
@@ -66,6 +65,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     /**
      * 新增员工
+     *
      * @param employeeDTO
      */
     @Override
@@ -94,7 +94,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     /**
      * 分页查询员工列表
-     *
+     * <p>
      * 本方法根据传入的分页查询参数，返回相应分页的员工列表
      * 主要用于处理员工管理相关的业务需求，通过提供分页查询功能，以支持大量数据的高效检索
      *
@@ -103,11 +103,29 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public PageResult<Employee> pageQuery(EmployeePageQueryDTO pageQuery) {
-        PageHelper.startPage(pageQuery.getPage(),pageQuery.getPageSize());
+        PageHelper.startPage(pageQuery.getPage(), pageQuery.getPageSize());
         Page<Employee> employees = employeeMapper.queryPage(pageQuery);
         PageResult<Employee> pageResult = new PageResult<>();
         pageResult.setTotal(employees.getTotal());
         pageResult.setRecords(employees.getResult());
         return pageResult;
+    }
+
+    /**
+     * 启用或停用账号
+     *
+     * @param status 账号状态，1表示启动，0表示停用
+     * @param id     账号ID
+     */
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        Employee employee = Employee
+                .builder()
+                .status(status)
+                .id(id)
+                .updateTime(LocalDateTime.now())
+                .updateUser(BaseContext.getCurrentId())
+                .build();
+        employeeMapper.update(employee);
     }
 }
