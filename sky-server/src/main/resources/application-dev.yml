@@ -7,8 +7,9 @@ sky:
     username: root
     password: 123456
   alioss:
-    access-key-id: LTAI5tAZUb5Ba2o49KLb3jcP
-    access-key-secret: P5FwTqAKrX7asW406zujlv19bQLHPc
+    #修改为环境变量获取
+    access-key-id: ${ALIBABA_CLOUD_ACCESS_KEY_ID}
+    access-key-secret: ${ALIBABA_CLOUD_ACCESS_KEY_SECRET}
     endpoint: oss-cn-hangzhou.aliyuncs.com
     bucket-name: sky-take-out-zank
 mybatis:
