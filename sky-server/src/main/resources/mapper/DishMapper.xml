@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.DishMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into dish (name, category_id, price, image, description,
+                          status, create_time, update_time,
+                          create_user, update_user)
+        values (#{dish.name}, #{dish.categoryId}, #{dish.price},
+                #{dish.image}, #{dish.description}, #{dish.status},
+                #{dish.createTime}, #{dish.updateTime}, #{dish.createUser},
+                #{dish.updateUser})
+    </insert>
+    <delete id="deleteBatches">
+        delete from dish where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+    <!--
+    resultMap 是自定义结果集
+    resultType 是固定结果集
+    -->
+    <select id="queryPage" resultType="com.sky.vo.DishVO">
+        select d.*,c.name categoryName
+        from dish d join category c on d.category_id = c.id
+        <where>
+            <if test="name != null">
+                and d.name like concat('%',#{name},'%')
+            </if>
+            <if test="categoryId != null">
+                and c.id = #{categoryId}
+            </if>
+            <if test="status != null">
+                and d.status =#{status}
+            </if>
+        </where>
+        order by d.create_time desc
+    </select>
+</mapper>

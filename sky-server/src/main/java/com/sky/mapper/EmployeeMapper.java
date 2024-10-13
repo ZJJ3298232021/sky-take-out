@@ -5,13 +5,15 @@ import com.sky.annotation.AutoFill;
 import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.enumeration.OperationType;
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface EmployeeMapper {
 
     /**
      * 根据用户名查询员工
+     *
      * @param username
      * @return
      */
@@ -23,20 +25,12 @@ public interface EmployeeMapper {
      *
      * @param employee 要保存的员工对象，包含员工的所有信息
      */
-    @Insert({
-            "insert into employee (name, username, password, phone, sex,"+
-            "id_number, status, create_time, update_time, create_user, update_user)"+
-            "values (#{employee.name}, #{employee.username}, #{employee.password},"+
-            "#{employee.phone}, #{employee.sex}, #{employee.idNumber},"+
-            "#{employee.status}, #{employee.createTime}, #{employee.updateTime},"+
-            "#{employee.createUser}, #{employee.updateUser})"
-    })
     @AutoFill(OperationType.INSERT)
-    void save(@Param("employee") Employee employee);
+    void save(Employee employee);
 
     /**
      * 查询员工分页数据
-     *
+     * <p>
      * 本方法用于根据提供的查询条件分页获取员工数据，通过EmployeePageQueryDTO参数来筛选员工信息
      * 主要用于支持前端展示分页数据，提高系统响应效率和用户体验
      *
