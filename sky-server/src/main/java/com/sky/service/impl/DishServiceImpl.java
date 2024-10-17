@@ -14,6 +14,7 @@ import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
+import com.sky.utils.AliOssUtil;
 import com.sky.utils.EmptyUtil;
 import com.sky.vo.DishVO;
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -40,6 +42,9 @@ public class DishServiceImpl implements DishService {
 
     @Autowired
     private SetmealDishMapper setmealDishMapper;
+
+    @Autowired
+    private AliOssUtil aliOssUtil;
 
 
     /**
@@ -90,9 +95,12 @@ public class DishServiceImpl implements DishService {
     @Transactional
     @Override
     public void deleteBatches(List<Long> ids) {
+        ArrayList<Dish> dishes  = new ArrayList<>();
+
         //遍历要删除的菜品ID，判断是否能删除，若不能则一个都不删除直接抛出异常
         ids.forEach(id->{
             Dish dish = dishMapper.getById(id);
+            dishes.add(dish);
             //判断是否启售，启售的菜品不能删除
             if (Objects.equals(dish.getStatus(), StatusConstant.ENABLE)) {
                 throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
@@ -105,5 +113,10 @@ public class DishServiceImpl implements DishService {
         //未抛出异常则正常执行以下删除1.删除菜品表数据2.删除口味表数据
         dishMapper.deleteBatches(ids);
         dishFlavorMapper.deleteBatches(ids);
+        for (Dish dish : dishes) {
+            int objectNameIndex = dish.getImage().lastIndexOf("img/");
+            String objectName = dish.getImage().substring(objectNameIndex);
+            aliOssUtil.delete(objectName);
+        }
     }
 }

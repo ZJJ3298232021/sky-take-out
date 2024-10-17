@@ -37,7 +37,7 @@ public interface DishMapper {
     Page<DishVO> queryPage(Dish dish);
 
     /**
-     * 根据id查询菜品和对应的口味信息
+     * 根据id查询菜品
      * @param id
      * @return
      */
@@ -49,4 +49,5 @@ public interface DishMapper {
      * @param ids
      */
     void deleteBatches(List<Long> ids);
+
 }

@@ -69,9 +69,9 @@ public class AutoFillAspect {
                 setUpdateUser.invoke(entity, id);
             }
         } catch (NoSuchMethodException e) {
-            throw new AnnotationIncorrectUseException(CustomConstant.ENTITY_NOT_FIRST_ERROR);
+            throw new AnnotationIncorrectUseException(CustomConstant.FIELD_NOT_EXIST_ERROR);
         } catch (InvocationTargetException | IllegalAccessException e) {
-            log.error("公共字段自动填充异常");
+            log.error(CustomConstant.AUTO_FILL_FAILED_ERROR);
         }
     }
 }
