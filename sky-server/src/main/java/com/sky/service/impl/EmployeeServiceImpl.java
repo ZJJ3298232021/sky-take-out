@@ -17,14 +17,20 @@ import com.sky.mapper.EmployeeMapper;
 import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 import org.mindrot.jbcrypt.BCrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.sky.config.BcryptConfig;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
+    private static final Logger log = LoggerFactory.getLogger(EmployeeServiceImpl.class);
+    @Autowired
+    private BcryptConfig bcryptConfig;
 
     @Autowired
     private EmployeeMapper employeeMapper;
@@ -78,7 +84,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setStatus(StatusConstant.ENABLE);
 
         //密码加密处理
-        employee.setPassword(BCrypt.hashpw(PasswordConstant.DEFAULT_PASSWORD, BCrypt.gensalt(12)));
+        employee.setPassword(BCrypt.hashpw(PasswordConstant.DEFAULT_PASSWORD, BCrypt.gensalt(Integer.parseInt(bcryptConfig.getSalt()))));
         employeeMapper.save(employee);
 
     }

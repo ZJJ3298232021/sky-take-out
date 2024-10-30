@@ -29,12 +29,12 @@ public class CategoryController {
     /**
      * 新增分类
      *
-     * @param categoryDTO
-     * @return
+     * @param categoryDTO categoryDTO
+     * @return Result<String>
      */
     @PostMapping
     @Operation(description = "新增分类")
-    public Result<String> save(@RequestBody CategoryDTO categoryDTO) {
+    public Result<String> categorySave(@RequestBody CategoryDTO categoryDTO) {
         log.info("新增分类：{}", categoryDTO);
         categoryService.save(categoryDTO);
         return Result.success();
@@ -43,12 +43,12 @@ public class CategoryController {
     /**
      * 分类分页查询
      *
-     * @param categoryPageQueryDTO
-     * @return
+     * @param categoryPageQueryDTO categoryPageQueryDTO
+     * @return Result<PageResult>
      */
     @GetMapping("/page")
     @Operation(description = "分类分页查询")
-    public Result<PageResult> page(CategoryPageQueryDTO categoryPageQueryDTO) {
+    public Result<PageResult> categoryPage(CategoryPageQueryDTO categoryPageQueryDTO) {
         log.info("分页查询：{}", categoryPageQueryDTO);
         PageResult pageResult = categoryService.pageQuery(categoryPageQueryDTO);
         return Result.success(pageResult);
@@ -57,12 +57,12 @@ public class CategoryController {
     /**
      * 删除分类
      *
-     * @param id
-     * @return
+     * @param id 要删除的分类id
+     * @return Result<String>
      */
     @DeleteMapping
     @Operation(description = "删除分类")
-    public Result<String> deleteById(Long id) {
+    public Result<String> categoryDeleteById(Long id) {
         log.info("删除分类：{}", id);
         categoryService.deleteById(id);
         return Result.success();
@@ -71,12 +71,12 @@ public class CategoryController {
     /**
      * 修改分类
      *
-     * @param categoryDTO
-     * @return
+     * @param categoryDTO categoryDTO
+     * @return Result<String>
      */
     @PutMapping
     @Operation(description = "修改分类")
-    public Result<String> update(@RequestBody CategoryDTO categoryDTO) {
+    public Result<String> categoryUpdate(@RequestBody CategoryDTO categoryDTO) {
         categoryService.update(categoryDTO);
         return Result.success();
     }
@@ -84,13 +84,13 @@ public class CategoryController {
     /**
      * 启用、禁用分类
      *
-     * @param status
-     * @param id
-     * @return
+     * @param status 状态
+     * @param id 分类id
+     * @return Result<String>
      */
     @PostMapping("/status/{status}")
     @Operation(description = "启用禁用分类")
-    public Result<String> startOrStop(@PathVariable("status") Integer status, Long id) {
+    public Result<String> categoryStartOrStop(@PathVariable("status") Integer status, Long id) {
         categoryService.startOrStop(status, id);
         return Result.success();
     }
@@ -98,12 +98,12 @@ public class CategoryController {
     /**
      * 根据类型查询分类
      *
-     * @param type
-     * @return
+     * @param type 分类类型
+     * @return Result<List<Category>>
      */
     @GetMapping("/list")
     @Operation(description = "根据类型查询分类")
-    public Result<List<Category>> list(Integer type) {
+    public Result<List<Category>> categoryList(Integer type) {
         List<Category> list = categoryService.list(type);
         return Result.success(list);
     }

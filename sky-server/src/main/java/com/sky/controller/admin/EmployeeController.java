@@ -42,7 +42,7 @@ public class EmployeeController {
      */
     @Operation(description = "员工登录")
     @PostMapping("/login")
-    public Result<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
+    public Result<EmployeeLoginVO> empLogin(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
         log.info("员工登录：{}", employeeLoginDTO);
 
         Employee employee = employeeService.login(employeeLoginDTO);
@@ -72,7 +72,7 @@ public class EmployeeController {
      */
     @Operation(description = "员工退出")
     @PostMapping("/logout")
-    public Result<String> logout() {
+    public Result<String> empLogout() {
         return Result.success();
     }
 
@@ -84,7 +84,7 @@ public class EmployeeController {
      */
     @PostMapping
     @Operation(description = "新增员工")
-    public Result save(@RequestBody EmployeeDTO employeeDTO) {
+    public Result empSave(@RequestBody EmployeeDTO employeeDTO) {
         log.info("新增员工，员工数据：{}", employeeDTO);
         employeeService.save(employeeDTO);
         return Result.success();
@@ -98,7 +98,7 @@ public class EmployeeController {
      */
     @GetMapping("/page")
     @Operation(description = "员工分页查询")
-    public Result<PageResult<Employee>> page(EmployeePageQueryDTO pageQuery) {
+    public Result<PageResult<Employee>> empPage(EmployeePageQueryDTO pageQuery) {
         log.info("员工分页查询，参数：{}", pageQuery);
         PageResult<Employee> pageResult = employeeService.pageQuery(pageQuery);
         return Result.success(pageResult);
@@ -114,7 +114,7 @@ public class EmployeeController {
      */
     @PostMapping("/status/{status}")
     @Operation(description = "启用禁用员工账号")
-    public Result startOrStop(@PathVariable Integer status, Long id) {
+    public Result empStartOrStop(@PathVariable Integer status, Long id) {
         log.info("启用禁用员工账号：status:{} , id:{}", status, id);
         employeeService.startOrStop(status, id);
         return Result.success();
@@ -127,7 +127,7 @@ public class EmployeeController {
      */
     @GetMapping("/{id}")
     @Operation(description = "根据id查询员工")
-    public Result<Employee> getById(@PathVariable Long id) {
+    public Result<Employee> empGetById(@PathVariable Long id) {
         log.info("根据id查询员工：{}", id);
         Employee employee = employeeService.getById(id);
         return Result.success(employee);
@@ -135,7 +135,7 @@ public class EmployeeController {
 
     @PutMapping
     @Operation(description = "修改员工信息")
-    public Result update(@RequestBody EmployeeDTO employeeDTO) {
+    public Result empUpdate(@RequestBody EmployeeDTO employeeDTO) {
         log.info("修改员工信息：{}", employeeDTO);
         employeeService.update(employeeDTO);
         return Result.success();
