@@ -84,4 +84,18 @@ public class DishController {
         DishVO dish = dishService.getByIdWithFlavor(id);
         return Result.success(dish);
     }
+
+    /**
+     * 启用禁用菜品
+     * @param status 设置状态
+     * @param id 菜品id
+     * @return Result
+     */
+    @PostMapping("/status/{status}")
+    @Operation(description = "启用禁用菜品")
+    public Result dishStartOrStop(@PathVariable("status") Integer status, Long id) {
+        log.info("启用禁用菜品，状态为{}，id为{}", status, id);
+        dishService.startOrStop(status, id);
+        return Result.success();
+    }
 }
