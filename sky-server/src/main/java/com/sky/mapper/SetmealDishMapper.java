@@ -4,6 +4,8 @@ import com.sky.entity.SetmealDish;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 @Mapper
 public interface SetmealDishMapper {
 
@@ -13,5 +15,11 @@ public interface SetmealDishMapper {
      * @return
      */
     @Select("select count(0) from setmeal_dish where dish_id = #{id}")
-    int getSetmealDishByDishId(Long id);
+    int countSetMealDishByDishId(Long id);
+
+    /**
+     * 批量插入套餐菜品关系数据
+     * @param setmealDishes
+     */
+    void insertBatches(List<SetmealDish> setmealDishes);
 }

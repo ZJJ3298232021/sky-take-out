@@ -3,14 +3,15 @@ package com.sky.controller.admin;
 import com.sky.constant.PathConstant;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
+import com.sky.entity.Dish;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,9 +23,9 @@ import java.util.List;
 @Slf4j
 @Tag(name = "菜品管理")
 @RequestMapping(PathConstant.ADMIN_DISH)
+@RequiredArgsConstructor
 public class DishController {
-    @Autowired
-    private DishService dishService;
+    private final DishService dishService;
 
     /*
      * 新增菜品
@@ -98,5 +99,18 @@ public class DishController {
         log.info("启用禁用菜品，状态为{}，id为{}", status, id);
         dishService.startOrStop(status, id);
         return Result.success();
+    }
+
+    /**
+     * 根据分类id或名称查询菜品
+     * @param categoryId 分类id
+     * @return Result
+     */
+    @GetMapping("/list")
+    @Operation(description = "根据分类id或名称查询菜品")
+    public Result<List<Dish>> dishList(Long categoryId,String name) {
+        log.info("根据分类id或名称查询菜品，分类id为{}，名称为{}", categoryId, name);
+        List<Dish> dishList = dishService.list(categoryId,name);
+        return Result.success(dishList);
     }
 }

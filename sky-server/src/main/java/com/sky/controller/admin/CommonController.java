@@ -9,23 +9,23 @@ import com.sky.utils.AliOssUtil;
 import com.sky.utils.DateStringUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /*
- *   @description: TODO
+ *   @description: 通用接口
  */
 @RestController
 @Slf4j
 @Tag(name = "通用接口")
 @RequestMapping(PathConstant.ADMIN_COMMON)
+@RequiredArgsConstructor
 public class CommonController {
-    @Autowired
-    private AliOssUtil ossUtil;
+    private final AliOssUtil ossUtil;
 
     /*
      * 文件上传

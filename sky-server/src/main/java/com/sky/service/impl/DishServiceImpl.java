@@ -7,7 +7,6 @@ import com.sky.constant.StatusConstant;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
-import com.sky.entity.DishFlavor;
 import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
@@ -17,33 +16,32 @@ import com.sky.service.DishService;
 import com.sky.utils.AliOssUtil;
 import com.sky.utils.EmptyUtil;
 import com.sky.vo.DishVO;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 /*
  * @description: 菜品管理
  */
 @Service
+@RequiredArgsConstructor
 public class DishServiceImpl implements DishService {
     private static final Logger log = LoggerFactory.getLogger(DishServiceImpl.class);
-    @Autowired
-    private DishMapper dishMapper;
+    private final DishMapper dishMapper;
 
-    @Autowired
-    private DishFlavorMapper dishFlavorMapper;
+    private final DishFlavorMapper dishFlavorMapper;
 
-    @Autowired
-    private SetmealDishMapper setmealDishMapper;
+    private final SetmealDishMapper setmealDishMapper;
 
-    @Autowired
-    private AliOssUtil aliOssUtil;
+    private final AliOssUtil aliOssUtil;
 
 
     /**
@@ -107,7 +105,7 @@ public class DishServiceImpl implements DishService {
                 throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
             }
             //判断菜品是否和套餐关联，若存在关联则不能删除
-            if (setmealDishMapper.getSetmealDishByDishId(id) > 0) {
+            if (setmealDishMapper.countSetMealDishByDishId(id) > 0) {
                 throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
             }
         });
@@ -139,7 +137,7 @@ public class DishServiceImpl implements DishService {
         }
         //更新菜品信息
         dishMapper.update(dish);
-/*
+        /*
         //获取原菜品口味ID
         List<Long> ids = dishFlavorMapper
                 .getByDishId(dish.getId())
@@ -189,4 +187,17 @@ public class DishServiceImpl implements DishService {
                 .build();
         dishMapper.update(dish);
     }
+
+    /**
+     * 根据分类ID查询菜品
+     * @param categoryId 分类ID
+     * @param name 菜品名称
+     * @return dishes
+     */
+    @Override
+    public List<Dish> list(Long categoryId,String name) {
+        //菜品名称为空则返回该分类下的所有菜品，否则返回该分类下包含该名称的菜品
+        return name == null ? dishMapper.getByCategoryId(categoryId) : dishMapper.getByName(name);
+    }
 }
+

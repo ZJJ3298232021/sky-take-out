@@ -11,6 +11,7 @@ import com.sky.properties.WeChatProperties;
 import com.sky.service.UserService;
 import com.sky.utils.HttpClientUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final WeChatProperties weChatProperties;
@@ -35,6 +37,7 @@ public class UserServiceImpl implements UserService {
     public User wxlogin(UserLoginDTO userLoginDTO) {
         HashMap<?, ?> map = getOpenId(userLoginDTO.getCode());
         if (!map.containsKey("openid")) {
+            log.info("微信登录失败，openid获取失败:{}",map.get("errmsg"));
             throw new LoginFailedException(MessageConstant.LOGIN_FAILED);
         }
         //获取openid
@@ -55,6 +58,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    // 调用微信官方提供的微信登录接口
     private HashMap<?, ?> getOpenId(String code) {
         //封装参数
         HashMap<String, String> hashMap = new HashMap<>();

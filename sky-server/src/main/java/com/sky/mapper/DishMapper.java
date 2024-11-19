@@ -67,4 +67,16 @@ public interface DishMapper {
             " price, image, description, status, create_time," +
             " update_time, create_user, update_user from dish where id = #{id}")
     DishVO selectById(Long id);
+
+    /**
+     * 根据菜品分类id查询菜品
+     */
+    List<Dish> getByCategoryId(Long categoryId);
+
+    /**
+     * 根据名称查询菜品
+     * @param name 菜品名称
+     * @return
+     */
+    List<Dish> getByName(String name);
 }

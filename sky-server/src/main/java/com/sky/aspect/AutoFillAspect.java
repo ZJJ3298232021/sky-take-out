@@ -1,4 +1,4 @@
-package com.sky.aop;
+package com.sky.aspect;
 
 import com.sky.annotation.AutoFill;
 import com.sky.constant.AutoFillConstant;
@@ -59,14 +59,11 @@ public class AutoFillAspect {
             Method setCreateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_TIME, LocalDateTime.class);
             Method setCreateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_USER, Long.class);
             Method setUpdateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER, Long.class);
+            setUpdateTime.invoke(entity, now);
+            setUpdateUser.invoke(entity, id);
             if (operationType == OperationType.INSERT) {
-                setUpdateTime.invoke(entity, now);
                 setCreateTime.invoke(entity, now);
                 setCreateUser.invoke(entity, id);
-                setUpdateUser.invoke(entity, id);
-            } else if (operationType == OperationType.UPDATE) {
-                setUpdateTime.invoke(entity, now);
-                setUpdateUser.invoke(entity, id);
             }
         } catch (NoSuchMethodException e) {
             throw new AnnotationIncorrectUseException(CustomConstant.FIELD_NOT_EXIST_ERROR);

@@ -80,7 +80,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         //属性拷贝
         BeanUtils.copyProperties(employeeDTO, employee);
 
-        //设置账号状态
+        //设置账号状态(因为前端没有传入，所以这里默认设置启用状态)
         employee.setStatus(StatusConstant.ENABLE);
 
         //密码加密处理
