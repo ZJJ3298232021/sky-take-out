@@ -14,6 +14,7 @@ public class GsonConfig {
     public Gson gson() {
         return new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
+                .setDateFormat("yyyy-MM-dd HH:mm:ss")
                 .create();
     }
 }

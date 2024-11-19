@@ -15,13 +15,15 @@ sky:
   bcrypt:
     # bcrypt加密算法的盐值，盐值越大破解越难，验证也需要更久的时间，默认为12
     salt: 13
+  wechat:
+    appid: wx67b91dbdfe95cbe1
+    secret: b2fe0883c44e783aeb5303cf22aa422b
 mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 spring:
   data:
     redis:
-      password: 123456
       host: localhost
       port: 6379
       database: 10

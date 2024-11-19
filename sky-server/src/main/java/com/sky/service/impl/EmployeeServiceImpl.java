@@ -2,6 +2,7 @@ package com.sky.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.config.BcryptConfig;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
@@ -21,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.sky.config.BcryptConfig;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -84,7 +84,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setStatus(StatusConstant.ENABLE);
 
         //密码加密处理
-        employee.setPassword(BCrypt.hashpw(PasswordConstant.DEFAULT_PASSWORD, BCrypt.gensalt(Integer.parseInt(bcryptConfig.getSalt()))));
+        employee.setPassword(
+                BCrypt.hashpw(
+                        PasswordConstant.DEFAULT_PASSWORD,
+                        BCrypt.gensalt(
+                                Integer.parseInt(
+                                        bcryptConfig.getSalt()
+                                )
+                        )
+                )
+        );
         employeeMapper.save(employee);
 
     }
@@ -110,6 +119,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     /**
      * 启用或停用账号
+     *
      * @param status 账号状态，1表示启动，0表示停用
      * @param id     账号ID
      */
@@ -127,6 +137,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     /**
      * 根据员工ID查询员工信息
+     *
      * @param id 员工ID
      * @return 员工信息
      */

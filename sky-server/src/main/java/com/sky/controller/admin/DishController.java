@@ -1,5 +1,6 @@
 package com.sky.controller.admin;
 
+import com.sky.constant.PathConstant;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.result.PageResult;
@@ -20,7 +21,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @Tag(name = "菜品管理")
-@RequestMapping("/admin/dish")
+@RequestMapping(PathConstant.ADMIN_DISH)
 public class DishController {
     @Autowired
     private DishService dishService;

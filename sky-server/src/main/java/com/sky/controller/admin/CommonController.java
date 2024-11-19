@@ -2,6 +2,7 @@ package com.sky.controller.admin;
 
 import com.sky.constant.DateFormatConstant;
 import com.sky.constant.MessageConstant;
+import com.sky.constant.PathConstant;
 import com.sky.context.BaseContext;
 import com.sky.result.Result;
 import com.sky.utils.AliOssUtil;
@@ -21,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @Slf4j
 @Tag(name = "通用接口")
-@RequestMapping("/admin/common")
+@RequestMapping(PathConstant.ADMIN_COMMON)
 public class CommonController {
     @Autowired
     private AliOssUtil ossUtil;

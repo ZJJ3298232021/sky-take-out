@@ -1,5 +1,6 @@
 package com.sky.controller.user;
 
+import com.sky.constant.PathConstant;
 import com.sky.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -8,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+/*
+ * 用户端店铺相关接口
+ */
 @RestController("userShopController")
-@RequestMapping("/user/shop")
+@RequestMapping(PathConstant.USER_SHOP)
 @Tag(name = "店铺相关接口")
 @Slf4j
 public class ShopController {

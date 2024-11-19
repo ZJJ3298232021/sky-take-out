@@ -1,10 +1,8 @@
 package com.sky.interceptor;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonParser;
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.context.BaseContext;
-import com.sky.json.JacksonObjectMapper;
 import com.sky.properties.JwtProperties;
 import com.sky.result.Result;
 import com.sky.utils.JwtUtil;
@@ -18,7 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * jwt令牌校验的拦截器
+ * 管理员jwt令牌校验的拦截器
  */
 @Component
 @Slf4j
@@ -26,6 +24,8 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
 
     @Autowired
     private JwtProperties jwtProperties;
+    @Autowired
+    private Gson gson;
 
     /**
      * 校验jwt
@@ -60,8 +60,8 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
             //4、不通过，响应状态码401
             response.setStatus(401);
             response.setContentType("application/json;charset=utf-8");
-            //todo 利用现有的Json工具替代Gson
-            response.getWriter().write(new Gson().toJson(Result.error("未登录")));
+            //toXdo 利用现有的Json工具替代Gson
+            response.getWriter().write(gson.toJson(Result.error("未登录")));
             return false;
         }
     }

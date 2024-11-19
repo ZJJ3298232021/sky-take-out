@@ -1,5 +1,6 @@
 package com.sky.controller.admin;
 
+import com.sky.constant.PathConstant;
 import com.sky.dto.CategoryDTO;
 import com.sky.dto.CategoryPageQueryDTO;
 import com.sky.entity.Category;
@@ -18,7 +19,7 @@ import java.util.List;
  * 分类管理
  */
 @RestController
-@RequestMapping("/admin/category")
+@RequestMapping(PathConstant.ADMIN_CATEGORY)
 @Tag(name = "分类相关接口")
 @Slf4j
 public class CategoryController {
