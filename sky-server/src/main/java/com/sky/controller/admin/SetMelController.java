@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 套餐管理
  * @author zank
@@ -28,7 +30,7 @@ public class SetMelController {
 
     /**
      * 新增套餐
-     * @param setmealDTO
+     * @param setmealDTO dto
      * @return result
      */
     @Operation(description = "新增套餐")
@@ -41,8 +43,8 @@ public class SetMelController {
 
     /**
      * 根据id查询套餐
-     * @param id
-     * @return
+     * @param id 套餐ID
+     * @return result
      */
     @GetMapping("/{id}")
     @Operation(description = "根据id查询套餐")
@@ -53,8 +55,8 @@ public class SetMelController {
 
     /**
      * 套餐分页查询
-     * @param setmealPageQueryDTO
-     * @return
+     * @param setmealPageQueryDTO 查询条件
+     * @return PageResult
      */
     @GetMapping("/page")
     @Operation(description = "套餐分页查询")
@@ -65,15 +67,36 @@ public class SetMelController {
 
     /**
      * 启用禁用套餐
-     * @param status
-     * @param id
-     * @return
+     * @param status 设置状态
+     * @param id 套餐ID
+     * @return result
      */
     @PostMapping("/status/{status}")
     @Operation(description = "启用禁用套餐")
     public Result startOrStopSetMeal(@PathVariable Integer status, Long id) {
         log.info("启用禁用套餐：{}", status);
         setMealService.startOrStop(status, id);
+        return Result.success();
+    }
+
+    /**
+     * 修改套餐
+     * @param setmealDTO dto
+     * @return result
+     */
+    @PutMapping
+    @Operation(description = "修改套餐")
+    public Result updateSetMeal(@RequestBody SetmealDTO setmealDTO) {
+        log.info("修改套餐：{}", setmealDTO);
+        setMealService.updateSetMealWithDish(setmealDTO);
+        return Result.success();
+    }
+
+    @DeleteMapping
+    @Operation(description = "批量删除套餐")
+    public Result deleteSetMeals(@RequestParam List<Long> ids) {
+        log.info("批量删除套餐：{}", ids);
+        setMealService.deleteBatchSetMeals(ids);
         return Result.success();
     }
 }

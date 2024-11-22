@@ -24,6 +24,7 @@ import java.util.List;
 @Tag(name = "菜品管理")
 @RequestMapping(PathConstant.ADMIN_DISH)
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class DishController {
     private final DishService dishService;
 

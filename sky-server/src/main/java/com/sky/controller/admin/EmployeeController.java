@@ -29,6 +29,7 @@ import java.util.Map;
 @Slf4j
 @Tag(name = "员工管理")
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class EmployeeController {
 
     private final EmployeeService employeeService;

@@ -2,15 +2,18 @@ package com.sky.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.constant.MessageConstant;
+import com.sky.constant.StatusConstant;
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
-import com.sky.mapper.CategoryMapper;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.SetMealService;
+import com.sky.utils.EmptyUtil;
 import com.sky.vo.SetmealVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +21,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -26,7 +31,6 @@ import java.util.List;
 public class SetMealServiceImpl implements SetMealService {
     private final SetmealMapper setmealMapper;
     private final SetmealDishMapper setmealDishMapper;
-    private final CategoryMapper categoryMapper;
 
     /**
      * 新增套餐，同时需要保存套餐和菜品的关联关系
@@ -56,11 +60,12 @@ public class SetMealServiceImpl implements SetMealService {
     @Override
     public SetmealVO getByIdWithDish(Long id) {
         //查询套餐数据,使用连接查询得到分类名称
-        SetmealVO setmealVO = setmealMapper.getByIdWithCategoryName(id);
+        List<SetmealVO> setmealVO = setmealMapper.getByIdWithCategoryName(Collections.singletonList(id));
+        SetmealVO setmeal = setmealVO.get(0);
         //查询套餐中的菜品
         List<SetmealDish> setmealDishes = setmealDishMapper.getDishesBySetmealId(id);
-        setmealVO.setSetmealDishes(setmealDishes);
-        return setmealVO;
+        setmeal.setSetmealDishes(setmealDishes);
+        return setmeal;
     }
 
     /**
@@ -91,5 +96,43 @@ public class SetMealServiceImpl implements SetMealService {
                 .status(status)
                 .build();
         setmealMapper.update(setmeal);
+    }
+
+    /**
+     * 修改套餐
+     * @param setmealDTO
+     */
+    @Transactional
+    @Override
+    public void updateSetMealWithDish(SetmealDTO setmealDTO) {
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDTO, setmeal);
+        //更新套餐的基本信息
+        setmealMapper.update(setmeal);
+        //删除套餐中的菜品信息
+        setmealDishMapper.deleteBatchesBySetmealIds(Collections.singletonList(setmealDTO.getId()));
+        if (!EmptyUtil.listEmpty(setmealDTO.getSetmealDishes())) {
+            //添加新的菜品信息
+            setmealDTO.getSetmealDishes().forEach(dish -> dish.setSetmealId(setmealDTO.getId()));
+            setmealDishMapper.insertBatches(setmealDTO.getSetmealDishes());
+        }
+    }
+
+    @Transactional
+    @Override
+    public void deleteBatchSetMeals(List<Long> ids) {
+        // 实际上不应该出现这种问题的，由于前端这个点没有做好所以需要判断一下，不然会出现code500
+        if (EmptyUtil.listEmpty(ids)) return;
+        //判断套餐是否起售，起售的套餐不能删除
+        setmealMapper.getByIdWithCategoryName(ids).forEach(setmealVO -> {
+            //起售中的套餐不能删除
+            if (Objects.equals(setmealVO.getStatus(), StatusConstant.ENABLE)) {
+                throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ON_SALE);
+            }
+        });
+        //删除套餐中的菜品信息
+        setmealDishMapper.deleteBatchesBySetmealIds(ids);
+        //批量删除套餐
+        setmealMapper.deleteBatches(ids);
     }
 }

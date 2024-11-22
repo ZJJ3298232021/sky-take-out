@@ -9,6 +9,8 @@ import com.sky.vo.SetmealVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 @Mapper
 public interface SetmealMapper {
 
@@ -29,10 +31,10 @@ public interface SetmealMapper {
 
     /**
      * 根据id查询套餐和其分类名称
-     * @param id
+     * @param ids
      * @return
      */
-    SetmealVO getByIdWithCategoryName(Long id);
+    List<SetmealVO> getByIdWithCategoryName(List<Long> ids);
 
     /**
      * 分页查询
@@ -47,4 +49,10 @@ public interface SetmealMapper {
      */
     @AutoFill(OperationType.UPDATE)
     void update(Setmeal setmeal);
+
+    /**
+     * 批量删除套餐
+     * @param ids
+     */
+    void deleteBatches(List<Long> ids);
 }

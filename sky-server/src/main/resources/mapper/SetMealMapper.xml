@@ -37,9 +37,18 @@
         </set>
         where id = #{id}
     </update>
+    <delete id="deleteBatches">
+        delete from setmeal where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
     <select id="getByIdWithCategoryName" resultType="com.sky.vo.SetmealVO">
         select s.*, c.name categoryName
-        from setmeal s join category c on s.category_id = c.id where s.id = #{id}
+        from setmeal s join category c on s.category_id = c.id where s.id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
     </select>
     <select id="pageQuery" resultType="com.sky.vo.SetmealVO">
         select s.*, c.name categoryName

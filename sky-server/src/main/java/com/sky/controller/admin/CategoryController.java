@@ -23,6 +23,7 @@ import java.util.List;
 @Tag(name = "分类相关接口")
 @Slf4j
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class CategoryController {
 
     private final CategoryService categoryService;
