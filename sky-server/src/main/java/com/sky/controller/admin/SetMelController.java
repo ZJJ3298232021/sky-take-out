@@ -19,7 +19,7 @@ import java.util.List;
  * 套餐管理
  * @author zank
  */
-@RestController
+@RestController("adminSetMealController")
 @RequestMapping(PathConstant.ADMIN_SETMEAL)
 @Slf4j
 @Tag(name = "套餐相关接口")

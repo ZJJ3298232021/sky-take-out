@@ -14,6 +14,7 @@ import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.SetMealService;
 import com.sky.utils.EmptyUtil;
+import com.sky.vo.DishItemVO;
 import com.sky.vo.SetmealVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -134,5 +135,27 @@ public class SetMealServiceImpl implements SetMealService {
         setmealDishMapper.deleteBatchesBySetmealIds(ids);
         //批量删除套餐
         setmealMapper.deleteBatches(ids);
+    }
+
+
+    /**
+     * 条件查询
+     * @param setmeal
+     * @return
+     */
+    @Override
+    public List<Setmeal> list(Setmeal setmeal) {
+        List<Setmeal> list = setmealMapper.list(setmeal);
+        return list;
+    }
+
+    /**
+     * 根据id查询菜品选项
+     * @param id
+     * @return
+     */
+    @Override
+    public List<DishItemVO> getDishItemById(Long id) {
+        return setmealMapper.getDishItemBySetmealId(id);
     }
 }

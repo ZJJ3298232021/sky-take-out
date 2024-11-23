@@ -11,12 +11,14 @@ import java.util.List;
 public interface DishService {
     /**
      * 新增菜品
+     *
      * @param dish
      */
     void insertDishWithFlavor(DishDTO dish);
 
     /**
      * 菜品分页查询
+     *
      * @param dto 菜品分页查询参数
      * @return
      */
@@ -24,6 +26,7 @@ public interface DishService {
 
     /**
      * 批量删除菜品
+     *
      * @param ids 菜品id
      */
     void deleteBatches(List<Long> ids);
@@ -32,6 +35,7 @@ public interface DishService {
 
     /**
      * 根据id查询菜品
+     *
      * @param id
      * @return
      */
@@ -39,6 +43,7 @@ public interface DishService {
 
     /**
      * 启用禁用菜品
+     *
      * @param status
      * @param id
      */
@@ -46,8 +51,17 @@ public interface DishService {
 
     /**
      * 根据分类id查询菜品
+     *
      * @param categoryId
      * @return
      */
-    List<Dish> list(Long categoryId,String name);
+    List<Dish> list(Long categoryId, String name);
+
+    /**
+     * 条件查询菜品和口味
+     *
+     * @param dish
+     * @return
+     */
+    List<DishVO> listWithFlavor(Dish dish);
 }

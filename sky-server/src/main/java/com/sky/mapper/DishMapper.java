@@ -79,4 +79,11 @@ public interface DishMapper {
      * @return
      */
     List<Dish> getByName(String name);
+
+    /**
+     * 条件查询菜品数据
+     * @param dish
+     * @return
+     */
+    List<Dish> list(Dish dish);
 }
