@@ -12,9 +12,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * 菜品管理
@@ -28,6 +31,8 @@ import java.util.List;
 public class DishController {
     private final DishService dishService;
 
+    private final RedisTemplate redisTemplate;
+
     /*
      * 新增菜品
      * @param dish
@@ -38,11 +43,13 @@ public class DishController {
     public Result addDish(@RequestBody DishDTO dish) {
         log.info("新增菜品，菜品数据：{}", dish);
         dishService.insertDishWithFlavor(dish);
+        clearCache("sky-take-out:category_dish:"+dish.getCategoryId());
         return Result.success();
     }
 
     /**
      * 菜品分页查询
+     *
      * @param dto
      * @return Result
      */
@@ -56,6 +63,7 @@ public class DishController {
 
     /**
      * 批量删除菜品
+     *
      * @param ids
      * @return
      */
@@ -64,6 +72,7 @@ public class DishController {
     public Result dishDelete(@RequestParam List<Long> ids) {
         log.info("批量删除菜品，id为{}", ids);
         dishService.deleteBatches(ids);
+        clearCache("sky-take-out:category_dish:*");
         return Result.success();
     }
 
@@ -72,11 +81,13 @@ public class DishController {
     public Result dishUpdate(@RequestBody DishDTO dishDTO) {
         log.info("修改菜品，菜品数据为：{}", dishDTO);
         dishService.updateDishWithFlavor(dishDTO);
+        clearCache("sky-take-out:category_dish:*");
         return Result.success();
     }
 
     /**
      * 根据ID查询菜品
+     *
      * @param id
      * @return
      */
@@ -90,8 +101,9 @@ public class DishController {
 
     /**
      * 启用禁用菜品
+     *
      * @param status 设置状态
-     * @param id 菜品id
+     * @param id     菜品id
      * @return Result
      */
     @PostMapping("/status/{status}")
@@ -99,19 +111,31 @@ public class DishController {
     public Result dishStartOrStop(@PathVariable("status") Integer status, Long id) {
         log.info("启用禁用菜品，状态为{}，id为{}", status, id);
         dishService.startOrStop(status, id);
+        clearCache("sky-take-out:category_dish:*");
         return Result.success();
     }
 
     /**
      * 根据分类id或名称查询菜品
+     *
      * @param categoryId 分类id
      * @return Result
      */
     @GetMapping("/list")
     @Operation(description = "根据分类id或名称查询菜品")
-    public Result<List<Dish>> dishList(Long categoryId,String name) {
+    public Result<List<Dish>> dishList(Long categoryId, String name) {
         log.info("根据分类id或名称查询菜品，分类id为{}，名称为{}", categoryId, name);
-        List<Dish> dishList = dishService.list(categoryId,name);
+        List<Dish> dishList = dishService.list(categoryId, name);
         return Result.success(dishList);
+    }
+
+    /**
+     * 清除缓存静态方法
+     */
+    private void clearCache(String pattern) {
+        Set<String> keys = redisTemplate.keys(pattern);
+        if (!Objects.isNull(keys)) {
+            redisTemplate.delete(keys);
+        }
     }
 }

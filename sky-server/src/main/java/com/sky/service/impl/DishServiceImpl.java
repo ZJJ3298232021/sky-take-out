@@ -130,8 +130,8 @@ public class DishServiceImpl implements DishService {
         Dish original = dishMapper.getById(dish.getId());
         //从原Dish取出原图片信息
         int index = original.getImage().lastIndexOf("img/");
-        if (index != -1) {
-            //如果是zank的bucket那就删除，不是不处理
+        if (index != -1 && !original.getImage().equals(dish.getImage())) {
+            //如果是zank的bucket那就删除，不是不处理，更新后图片不变，不处理
             String objectName = original.getImage().substring(index);
             //删除原图片
             aliOssUtil.delete(objectName);
@@ -176,12 +176,13 @@ public class DishServiceImpl implements DishService {
 
     /**
      * 启售停售菜品
+     *
      * @param status
      * @param id
      */
     @Override
     public void startOrStop(Integer status, Long id) {
-        Dish dish =  Dish
+        Dish dish = Dish
                 .builder()
                 .id(id)
                 .status(status)
@@ -191,12 +192,13 @@ public class DishServiceImpl implements DishService {
 
     /**
      * 根据分类ID或名称查询菜品
+     *
      * @param categoryId 分类ID
-     * @param name 菜品名称
+     * @param name       菜品名称
      * @return dishes
      */
     @Override
-    public List<Dish> list(Long categoryId,String name) {
+    public List<Dish> list(Long categoryId, String name) {
         //菜品名称为空则返回该分类下的所有菜品，否则返回该分类下包含该名称的菜品
         Dish dish = Dish
                 .builder()
@@ -209,6 +211,7 @@ public class DishServiceImpl implements DishService {
 
     /**
      * 条件查询菜品和口味
+     *
      * @param dish
      * @return
      */
