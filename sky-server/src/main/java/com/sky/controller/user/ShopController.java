@@ -4,10 +4,12 @@ import com.sky.constant.PathConstant;
 import com.sky.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /*
  * 用户端店铺相关接口
@@ -16,9 +18,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(PathConstant.USER_SHOP)
 @Tag(name = "店铺相关接口")
 @Slf4j
+@RequiredArgsConstructor
 public class ShopController {
-    @Autowired
-    public StringRedisTemplate redisTemplate;
+    public final StringRedisTemplate redisTemplate;
 
     private static final String KEY = "sky-take-out:shop:status";
 

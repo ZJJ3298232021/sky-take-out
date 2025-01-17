@@ -23,7 +23,6 @@ import java.util.List;
 @Tag(name = "分类相关接口")
 @Slf4j
 @RequiredArgsConstructor
-@SuppressWarnings("all")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -50,9 +49,9 @@ public class CategoryController {
      */
     @GetMapping("/page")
     @Operation(description = "分类分页查询")
-    public Result<PageResult> categoryPage(CategoryPageQueryDTO categoryPageQueryDTO) {
+    public Result<PageResult<?>> categoryPage(CategoryPageQueryDTO categoryPageQueryDTO) {
         log.info("分页查询：{}", categoryPageQueryDTO);
-        PageResult pageResult = categoryService.pageQuery(categoryPageQueryDTO);
+        PageResult<?> pageResult = categoryService.pageQuery(categoryPageQueryDTO);
         return Result.success(pageResult);
     }
 

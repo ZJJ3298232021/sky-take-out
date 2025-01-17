@@ -26,7 +26,6 @@ import java.util.List;
 @Tag(name = "菜品管理")
 @RequestMapping(PathConstant.ADMIN_DISH)
 @RequiredArgsConstructor
-@SuppressWarnings("all")
 public class DishController {
     private final DishService dishService;
 
@@ -35,14 +34,14 @@ public class DishController {
     /**
      * 新增菜品
      *
-     * @param dish
+     * @param dish .
      * @return Result
      * @Cache Description 缓存只删除新增菜品所属分类有关的缓存
      */
     @CacheEvict(value = "dish", key = "#dish.categoryId")
     @PostMapping
     @Operation(description = "新增菜品")
-    public Result addDish(@RequestBody DishDTO dish) {
+    public Result<?> addDish(@RequestBody DishDTO dish) {
         log.info("新增菜品，菜品数据：{}", dish);
         dishService.insertDishWithFlavor(dish);
         return Result.success();
@@ -71,7 +70,7 @@ public class DishController {
     @CacheEvict(value = "dish", allEntries = true)
     @DeleteMapping
     @Operation(description = "批量删除菜品")
-    public Result dishDelete(@RequestParam List<Long> ids) {
+    public Result<?> dishDelete(@RequestParam List<Long> ids) {
         log.info("批量删除菜品，id为{}", ids);
         dishService.deleteBatches(ids);
         return Result.success();
@@ -80,7 +79,7 @@ public class DishController {
     @CacheEvict(value = "dish", allEntries = true)
     @PutMapping
     @Operation(description = "修改菜品")
-    public Result dishUpdate(@RequestBody DishDTO dishDTO) {
+    public Result<?> dishUpdate(@RequestBody DishDTO dishDTO) {
         log.info("修改菜品，菜品数据为：{}", dishDTO);
         dishService.updateDishWithFlavor(dishDTO);
         return Result.success();
@@ -110,7 +109,7 @@ public class DishController {
     @CacheEvict(value = "dish", allEntries = true)
     @PostMapping("/status/{status}")
     @Operation(description = "启用禁用菜品")
-    public Result dishStartOrStop(@PathVariable("status") Integer status, Long id) {
+    public Result<?> dishStartOrStop(@PathVariable("status") Integer status, Long id) {
         log.info("启用禁用菜品，状态为{}，id为{}", status, id);
         dishService.startOrStop(status, id);
         return Result.success();

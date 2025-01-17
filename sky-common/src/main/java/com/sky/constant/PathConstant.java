@@ -9,4 +9,8 @@ public class PathConstant {
     public static final String ADMIN_SETMEAL = "/admin/setmeal";
     public static final String USER_SHOP = "/user/shop";
     public static final String USER_USER = "/user/user";
+    public static final String USER_CATEGORY = "/user/category";
+    public static final String USER_DISH = "/user/dish";
+    public static final String USER_SETMEAL = "/user/setmeal";
+    public static final String USER_SHOPPINGCART = "/user/shoppingCart";
 }

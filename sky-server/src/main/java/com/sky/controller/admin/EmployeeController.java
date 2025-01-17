@@ -29,7 +29,6 @@ import java.util.Map;
 @Slf4j
 @Tag(name = "员工管理")
 @RequiredArgsConstructor
-@SuppressWarnings("all")
 public class EmployeeController {
 
     private final EmployeeService employeeService;
@@ -38,8 +37,8 @@ public class EmployeeController {
     /**
      * 登录
      *
-     * @param employeeLoginDTO
-     * @return
+     * @param employeeLoginDTO .
+     * @return .
      */
     @Operation(description = "员工登录")
     @PostMapping("/login")
@@ -69,7 +68,7 @@ public class EmployeeController {
     /**
      * 退出
      *
-     * @return
+     * @return .
      */
     @Operation(description = "员工退出")
     @PostMapping("/logout")
@@ -85,7 +84,7 @@ public class EmployeeController {
      */
     @PostMapping
     @Operation(description = "新增员工")
-    public Result empSave(@RequestBody EmployeeDTO employeeDTO) {
+    public Result<?> empSave(@RequestBody EmployeeDTO employeeDTO) {
         log.info("新增员工，员工数据：{}", employeeDTO);
         employeeService.save(employeeDTO);
         return Result.success();
@@ -115,7 +114,7 @@ public class EmployeeController {
      */
     @PostMapping("/status/{status}")
     @Operation(description = "启用禁用员工账号")
-    public Result empStartOrStop(@PathVariable Integer status, Long id) {
+    public Result<?> empStartOrStop(@PathVariable Integer status, Long id) {
         log.info("启用禁用员工账号：status:{} , id:{}", status, id);
         employeeService.startOrStop(status, id);
         return Result.success();
@@ -136,7 +135,7 @@ public class EmployeeController {
 
     @PutMapping
     @Operation(description = "修改员工信息")
-    public Result empUpdate(@RequestBody EmployeeDTO employeeDTO) {
+    public Result<?> empUpdate(@RequestBody EmployeeDTO employeeDTO) {
         log.info("修改员工信息：{}", employeeDTO);
         employeeService.update(employeeDTO);
         return Result.success();

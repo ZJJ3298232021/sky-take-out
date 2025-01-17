@@ -20,11 +20,11 @@ public class GlobalExceptionHandler {
     /**
      * 捕获业务异常
      *
-     * @param ex
-     * @return
+     * @param ex .
+     * @return .
      */
     @ExceptionHandler
-    public Result exceptionHandler(BaseException ex) {
+    public Result<?> exceptionHandler(BaseException ex) {
         log.error("异常信息：{}", ex.getMessage());
         return Result.error(ex.getMessage());
     }
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
      * @return 返回一个Result对象，包含处理结果或错误信息
      */
     @ExceptionHandler
-    public Result exceptionHandler(SQLIntegrityConstraintViolationException ex) {
+    public Result<?> exceptionHandler(SQLIntegrityConstraintViolationException ex) {
         String message = ex.getMessage();
         if (message.contains(SqlExceptionConstant.DUPLICATE_ENTRY)) {
             String[] strings = message.split(" ");

@@ -1,5 +1,6 @@
 package com.sky.controller.user;
 
+import com.sky.constant.PathConstant;
 import com.sky.entity.Category;
 import com.sky.result.Result;
 import com.sky.service.CategoryService;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController("userCategoryController")
-@RequestMapping("/user/category")
+@RequestMapping(PathConstant.USER_CATEGORY)
 @Tag(name = "C端-分类接口")
 public class CategoryController {
 
@@ -22,8 +23,8 @@ public class CategoryController {
 
     /**
      * 查询分类
-     * @param type
-     * @return
+     * @param type .
+     * @return .
      */
     @GetMapping("/list")
     @Operation(description = "查询分类")

@@ -1,5 +1,6 @@
 package com.sky.controller.user;
 
+import com.sky.constant.PathConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.entity.Setmeal;
 import com.sky.result.Result;
@@ -7,7 +8,7 @@ import com.sky.service.SetMealService;
 import com.sky.vo.DishItemVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,16 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController("userSetmealController")
-@RequestMapping("/user/setmeal")
+@RequestMapping(PathConstant.USER_SETMEAL)
 @Tag(name = "C端-套餐浏览接口")
+@RequiredArgsConstructor
 public class SetmealController {
-    @Autowired
-    private SetMealService setmealService;
+    private final SetMealService setmealService;
 
     /**
      * 条件查询
      *
-     * @param categoryId
+     * @param categoryId .
      * @return ...
      * @Cache description 缓存套餐分类下套餐数据
      */
@@ -45,8 +46,8 @@ public class SetmealController {
     /**
      * 根据套餐id查询包含的菜品列表
      *
-     * @param id
-     * @return
+     * @param id .
+     * @return .
      */
     @GetMapping("/dish/{id}")
     @Operation(description = "根据套餐id查询包含的菜品列表")

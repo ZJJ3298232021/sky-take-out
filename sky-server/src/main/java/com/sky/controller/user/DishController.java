@@ -1,5 +1,6 @@
 package com.sky.controller.user;
 
+import com.sky.constant.PathConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.entity.Dish;
 import com.sky.result.Result;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController("userDishController")
-@RequestMapping("/user/dish")
+@RequestMapping(PathConstant.USER_DISH)
 @Slf4j
 @RequiredArgsConstructor
 @Tag(name = "C端-菜品浏览接口")

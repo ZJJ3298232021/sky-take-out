@@ -35,7 +35,7 @@ public class ShopController {
 
     @PutMapping("/{status}")
     @Operation(description = "修改店铺状态")
-    public Result changeStatus(@PathVariable Integer status) {
+    public Result<?> changeStatus(@PathVariable Integer status) {
         log.info("修改店铺状态:{}", status == 0 ? "打样" : "营业");
         redisTemplate.opsForValue().set(KEY,status.toString());
         return Result.success();
