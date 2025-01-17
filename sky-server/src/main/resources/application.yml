@@ -60,10 +60,12 @@ springdoc:
     # tags-sorter: 接口文档中的tags排序规则,默认为alpha,可选值为alpha(按字母顺序排序)或as-is(按照在代码中定义的顺序排序)
     operations-sorter: alpha
     # operations-sorter: 接口文档中的接口排序规则,默认为alpha,可选值为alpha(按字母顺序排序)或method(按方法名称排序)
+    enabled: true
 
   api-docs:
     path: /v3/api-docs
     # path: 配置api-docs的访问路径,默认为/v3/api-docs
+    enabled: true
   group-configs:
   # group-configs: 配置分组信息
   - group: 'default'

@@ -8,6 +8,7 @@ import com.sky.vo.DishItemVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,8 +27,10 @@ public class SetmealController {
      * 条件查询
      *
      * @param categoryId
-     * @return
+     * @return ...
+     * @Cache description 缓存套餐分类下套餐数据
      */
+    @Cacheable(value = "setmeal", key = "#categoryId")
     @GetMapping("/list")
     @Operation(description = "根据分类id查询套餐")
     public Result<List<Setmeal>> list(Long categoryId) {
