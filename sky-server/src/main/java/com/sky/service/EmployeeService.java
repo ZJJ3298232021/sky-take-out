@@ -11,15 +11,15 @@ public interface EmployeeService {
     /**
      * 员工登录
      *
-     * @param employeeLoginDTO
-     * @return
+     * @param employeeLoginDTO .
+     * @return .
      */
     Employee login(EmployeeLoginDTO employeeLoginDTO);
 
     /**
      * 新增员工
      *
-     * @param employeeDTO
+     * @param employeeDTO .
      */
     void save(EmployeeDTO employeeDTO);
 

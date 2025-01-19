@@ -6,7 +6,7 @@ import java.util.Objects;
 public class EmptyUtil {
 
     public static boolean stringEmpty(String str) {
-        return str==null || str.isEmpty();
+        return str == null || str.isEmpty();
     }
 
     public static boolean listEmpty(List<?> list) {

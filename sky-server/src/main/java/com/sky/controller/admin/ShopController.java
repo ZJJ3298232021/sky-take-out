@@ -16,17 +16,15 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ShopController {
 
-    public final StringRedisTemplate redisTemplate;
-
     private static final String KEY = "sky-take-out:shop:status";
-
+    public final StringRedisTemplate redisTemplate;
 
     @GetMapping("/status")
     @Operation(description = "获取店铺营业状态")
     public Result<Integer> adminGetStatus() {
         String status = redisTemplate.opsForValue().get(KEY);
         if (status != null) {
-            log.info("获取店铺营业状态：{}", status.equals("1")? "营业":"打样");
+            log.info("获取店铺营业状态：{}", status.equals("1") ? "营业" : "打样");
             return Result.success(Integer.parseInt(status));
         }
         return Result.error("获取失败");
@@ -37,7 +35,7 @@ public class ShopController {
     @Operation(description = "修改店铺状态")
     public Result<?> changeStatus(@PathVariable Integer status) {
         log.info("修改店铺状态:{}", status == 0 ? "打样" : "营业");
-        redisTemplate.opsForValue().set(KEY,status.toString());
+        redisTemplate.opsForValue().set(KEY, status.toString());
         return Result.success();
     }
 

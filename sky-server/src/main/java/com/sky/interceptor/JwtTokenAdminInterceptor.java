@@ -7,13 +7,13 @@ import com.sky.properties.JwtProperties;
 import com.sky.result.Result;
 import com.sky.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * 管理员jwt令牌校验的拦截器
@@ -30,11 +30,11 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
     /**
      * 校验jwt
      *
-     * @param request
-     * @param response
-     * @param handler
-     * @return boolean
-     * @throws Exception
+     * @param request  .
+     * @param response .
+     * @param handler  .
+     * @return boolean .
+     * @throws Exception .
      */
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //判断当前拦截到的是Controller的方法还是其他资源

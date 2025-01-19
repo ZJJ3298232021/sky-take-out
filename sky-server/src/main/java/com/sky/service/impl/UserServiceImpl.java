@@ -31,13 +31,13 @@ public class UserServiceImpl implements UserService {
      * 微信登录
      *
      * @param userLoginDTO 微信登录参数
-     * @return
+     * @return .
      */
     @Override
     public User wxlogin(UserLoginDTO userLoginDTO) {
         HashMap<?, ?> map = getOpenId(userLoginDTO.getCode());
         if (!map.containsKey("openid")) {
-            log.info("微信登录失败，openid获取失败:{}",map.get("errmsg"));
+            log.info("微信登录失败，openid获取失败:{}", map.get("errmsg"));
             throw new LoginFailedException(MessageConstant.LOGIN_FAILED);
         }
         //获取openid

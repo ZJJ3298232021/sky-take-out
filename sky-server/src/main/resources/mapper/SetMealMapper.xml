@@ -7,9 +7,9 @@
         insert into setmeal(category_id, name, price, status,
                             description, image, create_time,
                             update_time, create_user, update_user)
-        values (#{categoryId},#{name},#{price},#{status},
-                #{description},#{image},#{createTime},
-                #{updateTime},#{createUser},#{updateUser})
+        values (#{categoryId}, #{name}, #{price}, #{status},
+                #{description}, #{image}, #{createTime},
+                #{updateTime}, #{createUser}, #{updateUser})
     </insert>
     <update id="update">
         update setmeal
@@ -53,10 +53,10 @@
     <select id="pageQuery" resultType="com.sky.vo.SetmealVO">
         select s.*, c.name categoryName
         from
-            setmeal s
-                join
-            category c
-                on s.category_id = c.id
+        setmeal s
+        join
+        category c
+        on s.category_id = c.id
         <where>
             <if test="name != null">
                 and s.name like concat('%',#{name},'%')

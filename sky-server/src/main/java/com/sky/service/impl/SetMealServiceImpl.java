@@ -36,7 +36,7 @@ public class SetMealServiceImpl implements SetMealService {
     /**
      * 新增套餐，同时需要保存套餐和菜品的关联关系
      *
-     * @param setmealDTO
+     * @param setmealDTO .
      */
     @Override
     @Transactional
@@ -55,8 +55,9 @@ public class SetMealServiceImpl implements SetMealService {
 
     /**
      * 根据套餐id查询套餐数据
-     * @param id
-     * @return
+     *
+     * @param id .
+     * @return .
      */
     @Override
     public SetmealVO getByIdWithDish(Long id) {
@@ -71,8 +72,9 @@ public class SetMealServiceImpl implements SetMealService {
 
     /**
      * 分页查询套餐
-     * @param setmealPageQueryDTO
-     * @return
+     *
+     * @param setmealPageQueryDTO .
+     * @return .
      */
     @Override
     public PageResult<SetmealVO> pageQuery(SetmealPageQueryDTO setmealPageQueryDTO) {
@@ -86,8 +88,9 @@ public class SetMealServiceImpl implements SetMealService {
 
     /**
      * 启用禁用套餐
-     * @param status
-     * @param id
+     *
+     * @param status .
+     * @param id     .
      */
     @Override
     public void startOrStop(Integer status, Long id) {
@@ -101,7 +104,8 @@ public class SetMealServiceImpl implements SetMealService {
 
     /**
      * 修改套餐
-     * @param setmealDTO
+     *
+     * @param setmealDTO .
      */
     @Transactional
     @Override
@@ -140,19 +144,20 @@ public class SetMealServiceImpl implements SetMealService {
 
     /**
      * 条件查询
-     * @param setmeal
-     * @return
+     *
+     * @param setmeal .
+     * @return .
      */
     @Override
     public List<Setmeal> list(Setmeal setmeal) {
-        List<Setmeal> list = setmealMapper.list(setmeal);
-        return list;
+        return setmealMapper.list(setmeal);
     }
 
     /**
      * 根据id查询菜品选项
-     * @param id
-     * @return
+     *
+     * @param id .
+     * @return .
      */
     @Override
     public List<DishItemVO> getDishItemById(Long id) {

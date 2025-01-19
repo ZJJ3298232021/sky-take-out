@@ -14,4 +14,5 @@ public class PathConstant {
     public static final String USER_SETMEAL = "/user/setmeal";
     public static final String USER_SHOPPINGCART = "/user/shoppingCart";
     public static final String USER_ADDRESSBOOK = "/user/addressBook";
+    public static final String USER_ORDER = "/user/order";
 }

@@ -20,8 +20,8 @@ public class AddressBookServiceImpl implements AddressBookService {
     /**
      * 条件查询
      *
-     * @param addressBook
-     * @return
+     * @param addressBook .
+     * @return .
      */
     public List<AddressBook> list(AddressBook addressBook) {
         return addressBookMapper.list(addressBook);
@@ -30,7 +30,7 @@ public class AddressBookServiceImpl implements AddressBookService {
     /**
      * 新增地址
      *
-     * @param addressBook
+     * @param addressBook .
      */
     public void save(AddressBook addressBook) {
         addressBook.setUserId(BaseContext.getCurrentId());
@@ -41,18 +41,17 @@ public class AddressBookServiceImpl implements AddressBookService {
     /**
      * 根据id查询
      *
-     * @param id
-     * @return
+     * @param id .
+     * @return .
      */
     public AddressBook getById(Long id) {
-        AddressBook addressBook = addressBookMapper.getById(id);
-        return addressBook;
+        return addressBookMapper.getById(id);
     }
 
     /**
      * 根据id修改地址
      *
-     * @param addressBook
+     * @param addressBook .
      */
     public void update(AddressBook addressBook) {
         addressBookMapper.update(addressBook);
@@ -61,7 +60,7 @@ public class AddressBookServiceImpl implements AddressBookService {
     /**
      * 设置默认地址
      *
-     * @param addressBook
+     * @param addressBook .
      */
     @Transactional
     public void setDefault(AddressBook addressBook) {
@@ -78,7 +77,7 @@ public class AddressBookServiceImpl implements AddressBookService {
     /**
      * 根据id删除地址
      *
-     * @param id
+     * @param id .
      */
     public void deleteById(Long id) {
         addressBookMapper.deleteById(id);

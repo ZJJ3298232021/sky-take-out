@@ -20,48 +20,55 @@ public interface SetMealService {
 
     /**
      * 根据id查询套餐和其菜品
-     * @param id
-     * @return
+     *
+     * @param id .
+     * @return .
      */
     SetmealVO getByIdWithDish(Long id);
 
     /**
      * 分页查询
-     * @param setmealPageQueryDTO
-     * @return
+     *
+     * @param setmealPageQueryDTO .
+     * @return .
      */
     PageResult<SetmealVO> pageQuery(SetmealPageQueryDTO setmealPageQueryDTO);
 
     /**
      * 启用禁用套餐
-     * @param status
-     * @param id
+     *
+     * @param status .
+     * @param id     .
      */
     void startOrStop(Integer status, Long id);
 
     /**
      * 修改套餐
-     * @param setmealDTO
+     *
+     * @param setmealDTO .
      */
     void updateSetMealWithDish(SetmealDTO setmealDTO);
 
     /**
      * 批量删除套餐
-     * @param ids
+     *
+     * @param ids .
      */
     void deleteBatchSetMeals(List<Long> ids);
 
-        /**
+    /**
      * 条件查询
-     * @param setmeal
-     * @return
+     *
+     * @param setmeal .
+     * @return .
      */
     List<Setmeal> list(Setmeal setmeal);
 
     /**
      * 根据id查询菜品选项
-     * @param id
-     * @return
+     *
+     * @param id .
+     * @return .
      */
     List<DishItemVO> getDishItemById(Long id);
 }

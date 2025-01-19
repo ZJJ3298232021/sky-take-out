@@ -50,7 +50,7 @@ public class DishController {
     /**
      * 菜品分页查询
      *
-     * @param dto
+     * @param dto .
      * @return Result
      */
     @GetMapping("/page")
@@ -64,8 +64,8 @@ public class DishController {
     /**
      * 批量删除菜品
      *
-     * @param ids
-     * @return
+     * @param ids .
+     * @return .
      */
     @CacheEvict(value = "dish", allEntries = true)
     @DeleteMapping
@@ -88,8 +88,8 @@ public class DishController {
     /**
      * 根据ID查询菜品
      *
-     * @param id
-     * @return
+     * @param id .
+     * @return .
      */
     @GetMapping("{id}")
     @Operation(description = "根据ID查询菜品")

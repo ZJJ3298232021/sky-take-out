@@ -20,17 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 public class ShopController {
-    public final StringRedisTemplate redisTemplate;
-
     private static final String KEY = "sky-take-out:shop:status";
-
+    public final StringRedisTemplate redisTemplate;
 
     @GetMapping("/status")
     @Operation(description = "获取店铺营业状态")
     public Result<Integer> userGetStatus() {
         String status = redisTemplate.opsForValue().get(KEY);
         if (status != null) {
-            log.info("获取店铺营业状态：{}", status.equals("1")? "营业":"打样");
+            log.info("获取店铺营业状态：{}", status.equals("1") ? "营业" : "打样");
             return Result.success(Integer.parseInt(status));
         }
         return Result.error("获取失败");

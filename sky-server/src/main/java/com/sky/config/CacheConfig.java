@@ -9,20 +9,23 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.serializer.*;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.SerializationException;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.io.IOException;
 import java.time.Duration;
 
 /**
  * @description: 此配置用于设置Spring Cache,
- *               包含设置缓存过期时间、缓存键的序列化方式、缓存值的序列化方式、设置缓存前缀、关闭缓存空值
+ * 包含设置缓存过期时间、缓存键的序列化方式、缓存值的序列化方式、设置缓存前缀、关闭缓存空值
  */
 @Configuration
 public class CacheConfig {
     @Bean
     public RedisCacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
-        RedisSerializer<Object> serializer = new RedisSerializer<Object>() {
+        RedisSerializer<Object> serializer = new RedisSerializer<>() {
             private final ObjectMapper mapper = new JacksonObjectMapper();
 
             @Override

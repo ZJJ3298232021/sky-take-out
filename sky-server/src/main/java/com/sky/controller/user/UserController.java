@@ -37,6 +37,7 @@ public class UserController {
 
     /**
      * 微信登录
+     *
      * @param userLoginDTO 微信登录参数
      * @return Result token/openid/id
      */

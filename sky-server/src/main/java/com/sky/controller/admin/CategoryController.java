@@ -86,7 +86,7 @@ public class CategoryController {
      * 启用、禁用分类
      *
      * @param status 状态
-     * @param id 分类id
+     * @param id     分类id
      * @return Result<String>
      */
     @PostMapping("/status/{status}")
@@ -100,7 +100,7 @@ public class CategoryController {
      * 根据类型查询分类
      *
      * @param type 分类类型
-     * @return Result<List<Category>>
+     * @return Result<List < Category>>
      */
     @GetMapping("/list")
     @Operation(description = "根据类型查询分类")

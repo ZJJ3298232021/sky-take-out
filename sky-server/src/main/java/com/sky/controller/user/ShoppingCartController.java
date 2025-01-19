@@ -24,6 +24,7 @@ public class ShoppingCartController {
 
     /**
      * 添加购物车
+     *
      * @param dto .
      * @return .
      */
@@ -37,6 +38,7 @@ public class ShoppingCartController {
 
     /**
      * 查看购物车
+     *
      * @return .
      */
     @GetMapping("/list")
@@ -49,6 +51,7 @@ public class ShoppingCartController {
 
     /**
      * 删除购物车
+     *
      * @param dto .
      * @return .
      */
@@ -62,6 +65,7 @@ public class ShoppingCartController {
 
     /**
      * 清空购物车
+     *
      * @return .
      */
     @DeleteMapping("/clean")

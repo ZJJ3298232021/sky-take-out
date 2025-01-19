@@ -9,19 +9,22 @@ public interface ShoppingCartService {
 
     /**
      * 添加到购物车
+     *
      * @param dto .
      */
     public void addToCart(ShoppingCartDTO dto);
 
     /**
      * 查看购物车
-     * @return
+     *
+     * @return .
      */
     public List<ShoppingCart> getCart();
 
     /**
      * 减少购物车菜品数量
-     * @param dto
+     *
+     * @param dto .
      */
     void subToCart(ShoppingCartDTO dto);
 

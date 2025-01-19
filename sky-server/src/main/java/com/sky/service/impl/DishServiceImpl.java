@@ -18,8 +18,7 @@ import com.sky.utils.AliOssUtil;
 import com.sky.utils.EmptyUtil;
 import com.sky.vo.DishVO;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,8 +33,8 @@ import java.util.Objects;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DishServiceImpl implements DishService {
-    private static final Logger log = LoggerFactory.getLogger(DishServiceImpl.class);
     private final DishMapper dishMapper;
 
     private final DishFlavorMapper dishFlavorMapper;
@@ -48,7 +47,7 @@ public class DishServiceImpl implements DishService {
     /**
      * 新增菜品
      *
-     * @param dishDTO
+     * @param dishDTO .
      */
     @Transactional
     @Override
@@ -177,8 +176,8 @@ public class DishServiceImpl implements DishService {
     /**
      * 启售停售菜品
      *
-     * @param status
-     * @param id
+     * @param status .
+     * @param id     .
      */
     @Override
     public void startOrStop(Integer status, Long id) {
@@ -212,8 +211,8 @@ public class DishServiceImpl implements DishService {
     /**
      * 条件查询菜品和口味
      *
-     * @param dish
-     * @return
+     * @param dish .
+     * @return .
      */
     public List<DishVO> listWithFlavor(Dish dish) {
         List<Dish> dishList = dishMapper.list(dish);

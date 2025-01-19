@@ -67,13 +67,13 @@ springdoc:
     # path: 配置api-docs的访问路径,默认为/v3/api-docs
     enabled: true
   group-configs:
-  # group-configs: 配置分组信息
-  - group: 'default'
-    # group: 分组名称
-    paths-to-match: '/**'
-    # paths-to-match: 配置要匹配的路径,默认为/**
-    packages-to-scan: com.sky.controller
-    # packages-to-scan: 配置要扫描的包的路径,直接配置为Controller类所在的包名即可
+    # group-configs: 配置分组信息
+    - group: 'default'
+      # group: 分组名称
+      paths-to-match: '/**'
+      # paths-to-match: 配置要匹配的路径,默认为/**
+      packages-to-scan: com.sky.controller
+      # packages-to-scan: 配置要扫描的包的路径,直接配置为Controller类所在的包名即可
 
 # knife4j项目访问访问地址:http://127.0.0.1:8080/doc.html#/home
 knife4j:

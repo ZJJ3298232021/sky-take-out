@@ -69,21 +69,39 @@
         order by d.create_time desc
     </select>
     <select id="getByCategoryId" resultType="com.sky.entity.Dish">
-        select id, name, category_id, price, image,
-               description, status, create_time, update_time,
-               create_user, update_user
-        from dish where category_id = #{categoryId}
+        select id,
+               name,
+               category_id,
+               price,
+               image,
+               description,
+               status,
+               create_time,
+               update_time,
+               create_user,
+               update_user
+        from dish
+        where category_id = #{categoryId}
     </select>
     <select id="getByName" resultType="com.sky.entity.Dish">
-        select id, name, category_id, price,
-               image, description, status, create_time,
-               update_time, create_user, update_user
-        from dish where name like concat('%',#{name},'%')
+        select id,
+               name,
+               category_id,
+               price,
+               image,
+               description,
+               status,
+               create_time,
+               update_time,
+               create_user,
+               update_user
+        from dish
+        where name like concat('%', #{name}, '%')
     </select>
     <select id="list" resultType="com.sky.entity.Dish">
         select id, name, category_id, price, image,
-            description, status, create_time,
-            update_time, create_user, update_user
+        description, status, create_time,
+        update_time, create_user, update_user
         from dish
         <where>
             <if test="name != null">

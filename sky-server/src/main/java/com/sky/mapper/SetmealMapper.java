@@ -18,8 +18,8 @@ public interface SetmealMapper {
     /**
      * 根据分类id查询套餐的数量
      *
-     * @param id
-     * @return
+     * @param id .
+     * @return .
      */
     @Select("select count(id) from setmeal where category_id = #{categoryId}")
     Integer countByCategoryId(Long id);
@@ -27,7 +27,7 @@ public interface SetmealMapper {
     /**
      * 新增套餐
      *
-     * @param setmeal
+     * @param setmeal .
      */
     @AutoFill(value = OperationType.INSERT)
     void save(Setmeal setmeal);
@@ -35,23 +35,23 @@ public interface SetmealMapper {
     /**
      * 根据id查询套餐和其分类名称
      *
-     * @param ids
-     * @return
+     * @param ids .
+     * @return .
      */
     List<SetmealVO> getByIdWithCategoryName(List<Long> ids);
 
     /**
      * 分页查询
      *
-     * @param pageQuery
-     * @return
+     * @param pageQuery .
+     * @return .
      */
     Page<SetmealVO> pageQuery(SetmealPageQueryDTO pageQuery);
 
     /**
      * 修改套餐
      *
-     * @param setmeal
+     * @param setmeal .
      */
     @AutoFill(OperationType.UPDATE)
     void update(Setmeal setmeal);
@@ -59,7 +59,7 @@ public interface SetmealMapper {
     /**
      * 批量删除套餐
      *
-     * @param ids
+     * @param ids .
      */
     void deleteBatches(List<Long> ids);
 
@@ -67,16 +67,16 @@ public interface SetmealMapper {
     /**
      * 动态条件查询套餐
      *
-     * @param setmeal
-     * @return
+     * @param setmeal .
+     * @return .
      */
     List<Setmeal> list(Setmeal setmeal);
 
     /**
      * 根据套餐id查询菜品选项
      *
-     * @param setmealId
-     * @return
+     * @param setmealId .
+     * @return .
      */
     @Select("select sd.name, sd.copies, d.image, d.description " +
             "from setmeal_dish sd left join dish d on sd.dish_id = d.id " +

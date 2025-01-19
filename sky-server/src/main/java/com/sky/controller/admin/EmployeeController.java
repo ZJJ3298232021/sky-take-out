@@ -109,7 +109,7 @@ public class EmployeeController {
      * 该方法接收一个状态参数和一个员工ID，根据状态来启用或禁用员工账号
      *
      * @param status 员工账号的状态，用于判断是启用还是禁用
-     * @param id 员工的ID，用于标识需要操作的员工
+     * @param id     员工的ID，用于标识需要操作的员工
      * @return 返回一个成功的结果对象，表示操作成功
      */
     @PostMapping("/status/{status}")
@@ -122,6 +122,7 @@ public class EmployeeController {
 
     /**
      * 根据id查询员工信息
+     *
      * @param id 员工id
      * @return 返回员工信息
      */

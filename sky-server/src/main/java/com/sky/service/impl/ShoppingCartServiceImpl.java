@@ -32,6 +32,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     /**
      * 添加购物车
+     *
      * @param dto .
      */
     @Override
@@ -69,6 +70,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     /**
      * 查询购物车
+     *
      * @return .
      */
     @Override
@@ -80,6 +82,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     /**
      * 减少购物车菜品数量
+     *
      * @param dto .
      */
     @Override
@@ -89,7 +92,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         cart.setUserId(BaseContext.getCurrentId());
         ShoppingCart item = shoppingCartMapper.getCartItem(cart).get(0);
 
-        if(Objects.equals(item.getNumber(), 1)) {
+        if (Objects.equals(item.getNumber(), 1)) {
             //菜品数量为1，直接删除
             shoppingCartMapper.deleteById(item);
         } else {

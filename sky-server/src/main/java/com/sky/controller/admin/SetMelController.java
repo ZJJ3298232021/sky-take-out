@@ -18,6 +18,7 @@ import java.util.List;
 
 /**
  * 套餐管理
+ *
  * @author zank
  */
 @RestController("adminSetMealController")
@@ -31,6 +32,7 @@ public class SetMelController {
 
     /**
      * 新增套餐
+     *
      * @param setmealDTO dto
      * @return result
      */
@@ -45,6 +47,7 @@ public class SetMelController {
 
     /**
      * 根据id查询套餐
+     *
      * @param id 套餐ID
      * @return result
      */
@@ -57,6 +60,7 @@ public class SetMelController {
 
     /**
      * 套餐分页查询
+     *
      * @param setmealPageQueryDTO 查询条件
      * @return PageResult
      */
@@ -69,8 +73,9 @@ public class SetMelController {
 
     /**
      * 启用禁用套餐
+     *
      * @param status 设置状态
-     * @param id 套餐ID
+     * @param id     套餐ID
      * @return result
      */
     @CacheEvict(value = "setmeal", allEntries = true)
@@ -84,6 +89,7 @@ public class SetMelController {
 
     /**
      * 修改套餐
+     *
      * @param setmealDTO dto
      * @return result
      */
@@ -95,6 +101,7 @@ public class SetMelController {
         setMealService.updateSetMealWithDish(setmealDTO);
         return Result.success();
     }
+
     @CacheEvict(value = "setmeal", allEntries = true)
     @DeleteMapping
     @Operation(description = "批量删除套餐")

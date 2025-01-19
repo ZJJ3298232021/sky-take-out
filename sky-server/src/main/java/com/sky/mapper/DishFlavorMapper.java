@@ -11,19 +11,22 @@ import java.util.List;
 public interface DishFlavorMapper {
     /**
      * 批量插入口味数据
+     *
      * @param flavors 口味数据
-     * @param dishId 菜品id
+     * @param dishId  菜品id
      */
     void insertBatches(@Param("flavors") List<DishFlavor> flavors, @Param("dishId") Long dishId);
 
     /**
      * 根据多菜品id删除口味数据
+     *
      * @param ids 菜品口味id
      */
     void deleteBatches(List<Long> ids);
 
     /**
      * 根据菜品id查询口味数据
+     *
      * @param dishId 菜品id
      * @return List<DishFlavor>
      */
