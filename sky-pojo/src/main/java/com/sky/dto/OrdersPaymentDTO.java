@@ -7,7 +7,7 @@ import java.io.Serializable;
 @Data
 public class OrdersPaymentDTO implements Serializable {
     //订单号
-    private String orderNumber;
+    private Long orderId;
 
     //付款方式
     private Integer payMethod;

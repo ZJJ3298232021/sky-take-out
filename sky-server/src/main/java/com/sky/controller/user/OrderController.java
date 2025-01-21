@@ -1,6 +1,7 @@
 package com.sky.controller.user;
 
 import com.sky.constant.PathConstant;
+import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.result.Result;
 import com.sky.service.OrderService;
@@ -9,10 +10,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController("userOrderController")
 @RequestMapping(PathConstant.USER_ORDER)
@@ -35,5 +35,30 @@ public class OrderController {
         log.info("用户提交订单：{}", dto);
         OrderSubmitVO orderSubmitVO = orderService.submitOrder(dto);
         return Result.success(orderSubmitVO);
+    }
+
+    /**
+     * 支付订单
+     * @param paymentDTO .
+     * @return .
+     * @throws IOException .
+     */
+    @PutMapping("/payment")
+    @Operation(description = "支付订单")
+    public Result<?> pay(@RequestBody OrdersPaymentDTO paymentDTO) {
+        log.info("用户支付订单：{}", paymentDTO);
+        return Result.success(orderService.pay(paymentDTO));
+    }
+
+    /**
+     * 查询订单支付状态
+     * @param orderId .
+     * @return .
+     */
+    @GetMapping("/checkStatus")
+    public Result<Integer> checkStatus(Long orderId) {
+        log.info("查询订单支付状态：{}", orderId);
+        Integer payStatus = orderService.getPayStatus(orderId);
+        return Result.success(payStatus);
     }
 }

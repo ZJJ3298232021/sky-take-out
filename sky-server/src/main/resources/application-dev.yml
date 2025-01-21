@@ -12,6 +12,8 @@ sky:
     access-key-secret: ${ALIBABA_CLOUD_ACCESS_KEY_SECRET}
     endpoint: oss-cn-hangzhou.aliyuncs.com
     bucket-name: sky-take-out-zank1
+  alipay:
+    notify-url: http://49906452.r11.cpolar.top/notify
   bcrypt:
     # bcrypt加密算法的盐值，盐值越大破解越难，验证也需要更久的时间，默认为12
     salt: 13

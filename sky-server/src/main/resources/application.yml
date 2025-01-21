@@ -46,6 +46,14 @@ sky:
     access-key-secret: ${sky.alioss.access-key-secret}
     bucket-name: ${sky.alioss.bucket-name}
     endpoint: ${sky.alioss.endpoint}
+  alipay:
+    protocol: https
+    gatewayHost: openapi-sandbox.dl.alipaydev.com
+    sign-type: RSA2
+    app-id: ${app-id}
+    merchant-private-key: ${merchant-private-key}
+    alipay-public-key: ${alipay-public-key}
+    notify-url: ${sky.alipay.notify-url}
   wechat:
     appid: ${sky.wechat.appid}
     secret: ${sky.wechat.secret}

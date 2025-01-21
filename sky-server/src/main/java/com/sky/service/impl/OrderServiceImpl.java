@@ -1,7 +1,9 @@
 package com.sky.service.impl;
 
 import com.sky.constant.MessageConstant;
+import com.sky.constant.TradeStatusConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.AddressBook;
 import com.sky.entity.OrderDetail;
@@ -9,11 +11,9 @@ import com.sky.entity.Orders;
 import com.sky.entity.ShoppingCart;
 import com.sky.exception.AddressBookBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
-import com.sky.mapper.AddressBookMapper;
-import com.sky.mapper.OrderDetailMapper;
-import com.sky.mapper.OrderMapper;
-import com.sky.mapper.ShoppingCartMapper;
+import com.sky.mapper.*;
 import com.sky.service.OrderService;
+import com.sky.utils.AlipayUtil;
 import com.sky.utils.EmptyUtil;
 import com.sky.vo.OrderSubmitVO;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +39,9 @@ public class OrderServiceImpl implements OrderService {
 
     private final ShoppingCartMapper shoppingCartMapper;
 
+    private final AlipayUtil alipayUtil;
+
+    private final UserMapper userMapper;
     /**
      * 提交订单
      *
@@ -103,4 +106,72 @@ public class OrderServiceImpl implements OrderService {
                 .build();
     }
 
+    /**
+     * 支付订单
+     * @param paymentDTO .
+     * @return .
+     */
+
+    @Override
+    public String pay(OrdersPaymentDTO paymentDTO) {
+        //获取用户唯一Openid，防止多用户二维码覆盖
+        String openid = userMapper.getById(BaseContext.getCurrentId()).getOpenid();
+        List<Orders> orders = orderMapper.getOrders(Orders
+                .builder()
+                .id(paymentDTO.getOrderId())
+                .build()
+        );
+        Orders order = orders.get(0);
+        //生成二维码
+        String codeInBase64 = alipayUtil.getQrCodeInBase64(
+                order.getNumber(),
+                openid,
+                order.getAmount()
+        );
+        //微信支付的话，这里判断是否订单已支付，但是支付宝沙箱做不到，所以暂时不判断
+
+
+        return codeInBase64;
+    }
+
+    /**
+     * 更新订单状态
+     * @param tradeStatus .
+     * @param outTradeNo .
+     */
+
+    @Override
+    public void tradeStatus(String tradeStatus, String outTradeNo) {
+        Orders order = Orders.builder()
+                .checkoutTime(LocalDateTime.now())
+                .payMethod(2)
+                .number(outTradeNo)
+                .build();
+
+        switch (tradeStatus) {
+            case TradeStatusConstant.SUCCESS, TradeStatusConstant.FINISHED: {
+                order.setStatus(Orders.TO_BE_CONFIRMED);
+                order.setPayStatus(Orders.PAID);
+                break;
+            }
+            case TradeStatusConstant.PAYING, TradeStatusConstant.CLOSED: {
+                order.setStatus(Orders.PENDING_PAYMENT);
+                order.setPayStatus(Orders.UN_PAID);
+                break;
+            }
+        }
+        orderMapper.update(order);
+    }
+
+    /**
+     * 获取订单支付状态
+     * @param orderId .
+     * @return .
+     */
+    @Override
+    public Integer getPayStatus(Long orderId) {
+        List<Orders> orders = orderMapper.getOrders(Orders.builder().id(orderId).build());
+        Orders order = orders.get(0);
+        return order.getPayStatus();
+    }
 }
