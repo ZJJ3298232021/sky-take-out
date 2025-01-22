@@ -3,6 +3,7 @@ package com.sky.utils;
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import com.alipay.easysdk.factory.Factory;
 import com.alipay.easysdk.payment.common.models.AlipayTradeQueryResponse;
+import com.alipay.easysdk.payment.common.models.AlipayTradeRefundResponse;
 import com.alipay.easysdk.payment.facetoface.models.AlipayTradePrecreateResponse;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -106,6 +107,40 @@ public class AlipayUtil {
         } catch (Exception e) {
             log.error("查询支付宝订单状态异常", e);
             throw new RuntimeException("查询支付宝订单状态异常", e);
+        }
+    }
+
+    /**
+     * 申请退款
+     * @param orderNumber 商户订单号
+     * @param refundAmount 退款金额
+     * @return 是否退款成功
+     */
+    public boolean refund(String orderNumber, BigDecimal refundAmount) {
+        log.info("开始申请支付宝退款，订单号：{}，退款金额：{}",
+                orderNumber, refundAmount);
+        try {
+            // 调用支付宝API申请退款
+            AlipayTradeRefundResponse response =
+                    Factory.Payment.Common().refund(
+                            orderNumber,
+                            refundAmount.toString()
+                    );
+
+            log.info("支付宝退款申请结果：{}", response.getHttpBody());
+
+            if (response.code.equals("10000")) {
+                // 退款成功
+                log.info("退款成功，退款金额：{}", response.refundFee);
+                return true;
+            } else {
+                log.error("退款失败，错误码：{}，错误信息：{}", response.code, response.msg);
+                return false;
+            }
+
+        } catch (Exception e) {
+            log.error("申请退款异常", e);
+            throw new RuntimeException("申请退款异常", e);
         }
     }
 }

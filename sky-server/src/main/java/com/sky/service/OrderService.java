@@ -44,4 +44,17 @@ public interface OrderService {
      * @return .
      */
     PageResult<OrderVO> historyOrders(OrdersPageQueryDTO dto);
+
+    /**
+     * 订单详情
+     * @param id 订单ID
+     * @return .
+     */
+    OrderVO orderDetail(Long id);
+
+    /**
+     * 取消订单
+     * @param id .
+     */
+    void cancelOrder(Long id);
 }

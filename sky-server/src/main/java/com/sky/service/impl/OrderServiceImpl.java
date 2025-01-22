@@ -3,6 +3,7 @@ package com.sky.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
+import com.sky.constant.TradeConstant;
 import com.sky.constant.TradeStatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.OrdersPageQueryDTO;
@@ -13,6 +14,7 @@ import com.sky.entity.OrderDetail;
 import com.sky.entity.Orders;
 import com.sky.entity.ShoppingCart;
 import com.sky.exception.AddressBookBusinessException;
+import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
 import com.sky.result.PageResult;
@@ -183,7 +185,7 @@ public class OrderServiceImpl implements OrderService {
     public Integer getPayStatus(Long orderId) {
         List<Orders> orders = orderMapper.getOrders(Orders.builder().id(orderId).build());
 
-        if(!Objects.isNull(orders)) {
+        if (!EmptyUtil.listEmpty(orders)) {
             Orders order = orders.get(0);
             String status = alipayUtil.getOrderStatus(order.getNumber());
             return tradeStatus(status, order.getNumber());
@@ -192,6 +194,12 @@ public class OrderServiceImpl implements OrderService {
         return null;
     }
 
+    /**
+     * 历史订单
+     *
+     * @param dto .
+     * @return .
+     */
     @Override
     public PageResult<OrderVO> historyOrders(OrdersPageQueryDTO dto) {
         PageHelper.startPage(dto.getPage(), dto.getPageSize());
@@ -212,5 +220,56 @@ public class OrderServiceImpl implements OrderService {
         }).toList();
 
         return new PageResult<>(pages.getTotal(), orderVOS);
+    }
+
+    /**
+     * 订单详情
+     *
+     * @param id 订单ID
+     * @return .
+     */
+    @Override
+    public OrderVO orderDetail(Long id) {
+        Orders order = Orders
+                .builder()
+                .id(id)
+                .build();
+
+        List<Orders> orders = orderMapper.getOrders(order);
+
+        if (!EmptyUtil.listEmpty(orders)) {
+            order = orders.get(0);
+            OrderVO orderVO = new OrderVO();
+            BeanUtils.copyProperties(order, orderVO);
+            orderVO.setOrderDetailList(orderDetailMapper.getByOrderId(order.getId()));
+            return orderVO;
+        }
+        log.error("订单不存在");
+        return null;
+    }
+
+    @Override
+    public void cancelOrder(Long id) {
+        Orders order = Orders.builder().id(id).build();
+        List<Orders> orders = orderMapper.getOrders(order);
+        if (!EmptyUtil.listEmpty(orders)) {
+            order = orders.get(0);
+            Orders temp = Orders.builder().number(order.getNumber()).build();
+            if (order.getStatus() > 2) {
+                throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+            }
+
+            if(order.getStatus().equals(Orders.TO_BE_CONFIRMED)) {
+                alipayUtil.refund(order.getNumber(), order.getAmount());
+                temp.setPayStatus(Orders.REFUND);
+            }
+
+            temp.setStatus(Orders.CANCELLED);
+            temp.setCancelReason(TradeConstant.CANCELED);
+            temp.setCancelTime(LocalDateTime.now());
+            orderMapper.update(temp);
+        } else {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
     }
 }

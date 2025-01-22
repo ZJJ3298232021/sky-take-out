@@ -15,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-
 @RestController("userOrderController")
 @RequestMapping(PathConstant.USER_ORDER)
 @Slf4j
@@ -44,7 +42,6 @@ public class OrderController {
      * 支付订单
      * @param paymentDTO .
      * @return .
-     * @throws IOException .
      */
     @PutMapping("/payment")
     @Operation(description = "支付订单")
@@ -65,11 +62,42 @@ public class OrderController {
         return Result.success(payStatus);
     }
 
+    /**
+     * 历史订单
+     * @param dto .
+     * @return .
+     */
     @GetMapping("/historyOrders")
     @Operation(description = "查询历史订单")
     public Result<PageResult<OrderVO>> historyOrders(OrdersPageQueryDTO dto) {
         log.info("查询历史订单：{}", dto);
         PageResult<OrderVO> pageResult = orderService.historyOrders(dto);
         return Result.success(pageResult);
+    }
+
+    /**
+     * 订单详情
+     * @param id .
+     * @return .
+     */
+    @GetMapping("/orderDetail/{id}")
+    @Operation(description = "查询订单详情")
+    public Result<OrderVO> orderDetail(@PathVariable Long id) {
+        log.info("查询订单详情：{}", id);
+        OrderVO orderVO = orderService.orderDetail(id);
+        return Result.success(orderVO);
+    }
+
+    /**
+     * 取消订单
+     * @param id .
+     * @return .
+     */
+    @PutMapping("/cancel/{id}")
+    @Operation(description = "取消订单")
+    public Result<?> cancelOrder(@PathVariable Long id) {
+        log.info("取消订单：{}", id);
+        orderService.cancelOrder(id);
+        return Result.success();
     }
 }
