@@ -1,8 +1,11 @@
 package com.sky.service;
 
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
+import com.sky.result.PageResult;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.vo.OrderVO;
 
 public interface OrderService {
 
@@ -27,11 +30,18 @@ public interface OrderService {
      *
      * @param tradeStatus .
      */
-    void tradeStatus(String tradeStatus, String outTradeNo);
+    Integer tradeStatus(String tradeStatus, String outTradeNo);
 
     /**
      * 查询订单支付状态
      * @param orderId .
      */
     Integer getPayStatus(Long orderId);
+
+    /**
+     * 历史订单分页查询
+     * @param dto .
+     * @return .
+     */
+    PageResult<OrderVO> historyOrders(OrdersPageQueryDTO dto);
 }

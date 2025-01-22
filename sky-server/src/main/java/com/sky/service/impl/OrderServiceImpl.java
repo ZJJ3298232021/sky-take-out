@@ -1,8 +1,11 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.TradeStatusConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.AddressBook;
@@ -12,10 +15,12 @@ import com.sky.entity.ShoppingCart;
 import com.sky.exception.AddressBookBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
+import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.AlipayUtil;
 import com.sky.utils.EmptyUtil;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.vo.OrderVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -42,6 +47,7 @@ public class OrderServiceImpl implements OrderService {
     private final AlipayUtil alipayUtil;
 
     private final UserMapper userMapper;
+
     /**
      * 提交订单
      *
@@ -108,6 +114,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 支付订单
+     *
      * @param paymentDTO .
      * @return .
      */
@@ -136,12 +143,14 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 更新订单状态
+     *
      * @param tradeStatus .
-     * @param outTradeNo .
+     * @param outTradeNo  .
+     * @return 返回订单支付状态
      */
 
     @Override
-    public void tradeStatus(String tradeStatus, String outTradeNo) {
+    public Integer tradeStatus(String tradeStatus, String outTradeNo) {
         Orders order = Orders.builder()
                 .checkoutTime(LocalDateTime.now())
                 .payMethod(2)
@@ -161,17 +170,47 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         orderMapper.update(order);
+        return order.getPayStatus();
     }
 
     /**
      * 获取订单支付状态
+     *
      * @param orderId .
      * @return .
      */
     @Override
     public Integer getPayStatus(Long orderId) {
         List<Orders> orders = orderMapper.getOrders(Orders.builder().id(orderId).build());
-        Orders order = orders.get(0);
-        return order.getPayStatus();
+
+        if(!Objects.isNull(orders)) {
+            Orders order = orders.get(0);
+            String status = alipayUtil.getOrderStatus(order.getNumber());
+            return tradeStatus(status, order.getNumber());
+        }
+
+        return null;
+    }
+
+    @Override
+    public PageResult<OrderVO> historyOrders(OrdersPageQueryDTO dto) {
+        PageHelper.startPage(dto.getPage(), dto.getPageSize());
+
+        // 查询历史订单
+        dto.setUserId(BaseContext.getCurrentId());
+        Page<Orders> pages = orderMapper.pageQuery(dto);
+
+        //获取历史订单详情
+        List<OrderVO> orderVOS = pages.getResult().stream().map(order -> {
+            Long id = order.getId();
+            List<OrderDetail> orderDetails = orderDetailMapper.getByOrderId(id);
+
+            OrderVO orderVO = new OrderVO();
+            BeanUtils.copyProperties(order, orderVO);
+            orderVO.setOrderDetailList(orderDetails);
+            return orderVO;
+        }).toList();
+
+        return new PageResult<>(pages.getTotal(), orderVOS);
     }
 }

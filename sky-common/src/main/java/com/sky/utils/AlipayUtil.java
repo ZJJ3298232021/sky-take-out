@@ -2,6 +2,7 @@ package com.sky.utils;
 
 import cn.hutool.extra.qrcode.QrCodeUtil;
 import com.alipay.easysdk.factory.Factory;
+import com.alipay.easysdk.payment.common.models.AlipayTradeQueryResponse;
 import com.alipay.easysdk.payment.facetoface.models.AlipayTradePrecreateResponse;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -23,6 +24,7 @@ public class AlipayUtil {
 
     private final AlipayProperties aliPayProperties;
 
+
     public String getQrCodeInBase64(String orderNumber, String openid, BigDecimal amount) {
         log.info("正在获取支付宝二维码Base64");
         log.info("alipayPublicKey:{}", aliPayProperties.getAlipayPublicKey());
@@ -33,9 +35,9 @@ public class AlipayUtil {
         Factory.setOptions(aliPayProperties.toAlipayConfig());
         String path = "./qrCode" + openid + ".png";
         //log方法参数
-        log.info("orderNumber:{}",orderNumber);
-        log.info("amount:{}",amount);
-        log.info("openid:{}",openid);
+        log.info("orderNumber:{}", orderNumber);
+        log.info("amount:{}", amount);
+        log.info("openid:{}", openid);
         try {
             AlipayTradePrecreateResponse response = Factory.Payment.FaceToFace().preCreate(
                     "苍穹外卖点菜",
@@ -69,6 +71,41 @@ public class AlipayUtil {
             return base64Pic;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 查询支付宝订单状态
+     *
+     * @param orderNumber 商户订单号
+     * @return 订单状态：
+     * WAIT_BUYER_PAY（交易创建，等待买家付款）
+     * TRADE_CLOSED（未付款交易超时关闭，或支付完成后全额退款）
+     * TRADE_SUCCESS（交易支付成功）
+     * TRADE_FINISHED（交易结束，不可退款）
+     */
+    public String getOrderStatus(String orderNumber) {
+        log.info("开始查询支付宝订单状态：{}", orderNumber);
+        Factory.setOptions(aliPayProperties.toAlipayConfig());
+        try {
+            // 调用支付宝API查询订单状态
+            AlipayTradeQueryResponse response =
+                    Factory.Payment.Common().query(orderNumber);
+
+            log.info("支付宝订单查询结果：{}", response.getHttpBody());
+
+            if (response.code.equals("10000")) {
+                // 接口调用成功，返回订单状态
+                return response.tradeStatus;
+            } else {
+                log.error("查询支付宝订单状态失败，错误码：{}，错误信息：{}",
+                        response.code, response.msg);
+                throw new RuntimeException("查询支付宝订单状态失败");
+            }
+
+        } catch (Exception e) {
+            log.error("查询支付宝订单状态异常", e);
+            throw new RuntimeException("查询支付宝订单状态异常", e);
         }
     }
 }
