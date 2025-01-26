@@ -12,7 +12,7 @@ public interface ShoppingCartMapper {
     /**
      * 插入到购物车表
      */
-    void insert(ShoppingCart shoppingCart);
+    void insertBatch(List<ShoppingCart> items);
 
     /**
      * 查询符合条件的购物车数据

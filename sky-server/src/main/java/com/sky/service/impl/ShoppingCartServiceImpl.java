@@ -64,7 +64,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             //新添加的购物车菜品数量为1
             shoppingCart.setNumber(1);
             shoppingCart.setCreateTime(LocalDateTime.now());
-            shoppingCartMapper.insert(shoppingCart);
+            shoppingCartMapper.insertBatch(List.of(shoppingCart));
         }
     }
 

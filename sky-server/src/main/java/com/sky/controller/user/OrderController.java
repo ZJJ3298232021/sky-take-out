@@ -100,4 +100,12 @@ public class OrderController {
         orderService.cancelOrder(id);
         return Result.success();
     }
+
+    @PostMapping("/repetition/{id}")
+    @Operation(description = "再来一单")
+    public Result<?> oneMoreOrder(@PathVariable Long id) {
+        log.info("再来一单：{}", id);
+        orderService.oneMoreOrder(id);
+        return Result.success();
+    }
 }

@@ -8,6 +8,8 @@ import com.alipay.easysdk.payment.facetoface.models.AlipayTradePrecreateResponse
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.sky.constant.MessageConstant;
+import com.sky.exception.OrderBusinessException;
 import com.sky.properties.AlipayProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,13 @@ public class AlipayUtil {
     private final AlipayProperties aliPayProperties;
 
 
+    /**
+     * 获取支付宝二维码Base64
+     * @param orderNumber 订单号
+     * @param openid 微信用户唯一标识
+     * @param amount 订单金额
+     * @return 二维码Base64
+     */
     public String getQrCodeInBase64(String orderNumber, String openid, BigDecimal amount) {
         log.info("正在获取支付宝二维码Base64");
         log.info("alipayPublicKey:{}", aliPayProperties.getAlipayPublicKey());
@@ -101,7 +110,7 @@ public class AlipayUtil {
             } else {
                 log.error("查询支付宝订单状态失败，错误码：{}，错误信息：{}",
                         response.code, response.msg);
-                throw new RuntimeException("查询支付宝订单状态失败");
+                throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
             }
 
         } catch (Exception e) {

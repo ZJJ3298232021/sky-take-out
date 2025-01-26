@@ -272,4 +272,22 @@ public class OrderServiceImpl implements OrderService {
             throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
         }
     }
+
+    @Override
+    public void oneMoreOrder(Long id) {
+        //首先根据订单ID查询出订单下的所有商品
+        List<OrderDetail> orderDetails = orderDetailMapper.getByOrderId(id);
+
+        List<ShoppingCart> list = orderDetails.stream().map(orderDetail -> {
+            ShoppingCart shoppingCart = new ShoppingCart();
+            BeanUtils.copyProperties(orderDetail, shoppingCart, "id");
+            shoppingCart.setUserId(BaseContext.getCurrentId());
+            shoppingCart.setCreateTime(LocalDateTime.now());
+            return shoppingCart;
+        }).toList();
+
+        //将这些商品添加到购物车
+        shoppingCartMapper.insertBatch(list);
+
+    }
 }
