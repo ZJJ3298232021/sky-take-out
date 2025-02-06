@@ -43,8 +43,18 @@
             <if test="payMethod != null">
                 pay_method = #{payMethod},
             </if>
+            <if test="checkoutTime != null">
+                checkout_time = #{checkoutTime},
+            </if>
         </set>
-        where number = #{number}
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="number != null">
+                and number = #{number}
+            </if>
+        </where>
     </update>
     <select id="getOrders" resultType="com.sky.entity.Orders">
         select id,
@@ -83,29 +93,29 @@
     </select>
     <select id="pageQuery" resultType="com.sky.vo.OrderVO">
         select id,
-               number,
-               status,
-               user_id,
-               address_book_id,
-               order_time,
-               checkout_time,
-               pay_method,
-               pay_status,
-               amount,
-               remark,
-               phone,
-               address,
-               user_name,
-               consignee,
-               cancel_reason,
-               rejection_reason,
-               cancel_time,
-               estimated_delivery_time,
-               delivery_status,
-               delivery_time,
-               pack_amount,
-               tableware_number,
-               tableware_status
+        number,
+        status,
+        user_id,
+        address_book_id,
+        order_time,
+        checkout_time,
+        pay_method,
+        pay_status,
+        amount,
+        remark,
+        phone,
+        address,
+        user_name,
+        consignee,
+        cancel_reason,
+        rejection_reason,
+        cancel_time,
+        estimated_delivery_time,
+        delivery_status,
+        delivery_time,
+        pack_amount,
+        tableware_number,
+        tableware_status
         from orders
         <where>
             <if test="status != null">
@@ -128,5 +138,10 @@
             </if>
         </where>
         order by order_time desc
+    </select>
+    <select id="statusCount" resultType="java.lang.Integer">
+        select COUNT(*)
+        from orders
+        where status = #{status}
     </select>
 </mapper>

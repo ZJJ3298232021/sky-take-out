@@ -1,6 +1,8 @@
 package com.sky.controller.user;
 
 import com.sky.constant.PathConstant;
+import com.sky.constant.TradeConstant;
+import com.sky.dto.OrdersCancelDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
@@ -40,6 +42,7 @@ public class OrderController {
 
     /**
      * 支付订单
+     *
      * @param paymentDTO .
      * @return .
      */
@@ -52,6 +55,7 @@ public class OrderController {
 
     /**
      * 查询订单支付状态
+     *
      * @param orderId .
      * @return .
      */
@@ -64,6 +68,7 @@ public class OrderController {
 
     /**
      * 历史订单
+     *
      * @param dto .
      * @return .
      */
@@ -77,6 +82,7 @@ public class OrderController {
 
     /**
      * 订单详情
+     *
      * @param id .
      * @return .
      */
@@ -90,6 +96,7 @@ public class OrderController {
 
     /**
      * 取消订单
+     *
      * @param id .
      * @return .
      */
@@ -97,10 +104,16 @@ public class OrderController {
     @Operation(description = "取消订单")
     public Result<?> cancelOrder(@PathVariable Long id) {
         log.info("取消订单：{}", id);
-        orderService.cancelOrder(id);
+        orderService.cancelOrder(new OrdersCancelDTO(id, TradeConstant.CANCELED));
         return Result.success();
     }
 
+    /**
+     * 再来一单
+     *
+     * @param id .
+     * @return .
+     */
     @PostMapping("/repetition/{id}")
     @Operation(description = "再来一单")
     public Result<?> oneMoreOrder(@PathVariable Long id) {

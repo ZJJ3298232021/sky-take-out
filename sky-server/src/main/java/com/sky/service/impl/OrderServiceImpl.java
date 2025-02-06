@@ -3,12 +3,9 @@ package com.sky.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
-import com.sky.constant.TradeConstant;
 import com.sky.constant.TradeStatusConstant;
 import com.sky.context.BaseContext;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersPaymentDTO;
-import com.sky.dto.OrdersSubmitDTO;
+import com.sky.dto.*;
 import com.sky.entity.AddressBook;
 import com.sky.entity.OrderDetail;
 import com.sky.entity.Orders;
@@ -21,6 +18,7 @@ import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.AlipayUtil;
 import com.sky.utils.EmptyUtil;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import lombok.RequiredArgsConstructor;
@@ -202,6 +200,7 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public PageResult<OrderVO> historyOrders(OrdersPageQueryDTO dto) {
+        //PageHelper分页
         PageHelper.startPage(dto.getPage(), dto.getPageSize());
 
         // 查询历史订单
@@ -248,24 +247,32 @@ public class OrderServiceImpl implements OrderService {
         return null;
     }
 
+    /**
+     * 取消订单
+     * @param dto .
+     */
     @Override
-    public void cancelOrder(Long id) {
-        Orders order = Orders.builder().id(id).build();
+    public void cancelOrder(OrdersCancelDTO dto) {
+        Orders order = Orders.builder().id(dto.getId()).build();
         List<Orders> orders = orderMapper.getOrders(order);
+
+        //判断订单是否存在
         if (!EmptyUtil.listEmpty(orders)) {
             order = orders.get(0);
-            Orders temp = Orders.builder().number(order.getNumber()).build();
-            if (order.getStatus() > 2) {
-                throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
-            }
+            Orders temp = Orders.builder().id(dto.getId()).build();
 
-            if(order.getStatus().equals(Orders.TO_BE_CONFIRMED)) {
+            //由于用户端与管理员端复用此方法，故注释此判断
+//            if (order.getStatus() > 2) {
+//                throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+//            }
+
+            if (Objects.equals(order.getPayStatus(), Orders.PAID)) {
                 alipayUtil.refund(order.getNumber(), order.getAmount());
                 temp.setPayStatus(Orders.REFUND);
             }
 
             temp.setStatus(Orders.CANCELLED);
-            temp.setCancelReason(TradeConstant.CANCELED);
+            temp.setCancelReason(dto.getCancelReason());
             temp.setCancelTime(LocalDateTime.now());
             orderMapper.update(temp);
         } else {
@@ -273,6 +280,11 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    /**
+     * 再来一单
+     *
+     * @param id .
+     */
     @Override
     public void oneMoreOrder(Long id) {
         //首先根据订单ID查询出订单下的所有商品
@@ -289,5 +301,124 @@ public class OrderServiceImpl implements OrderService {
         //将这些商品添加到购物车
         shoppingCartMapper.insertBatch(list);
 
+    }
+
+    /**
+     * 条件搜索订单
+     *
+     * @param dto .
+     * @return .
+     */
+    @Override
+    public PageResult<Orders> conditionSearch(OrdersPageQueryDTO dto) {
+        PageHelper.startPage(dto.getPage(), dto.getPageSize());
+
+        Page<Orders> orders = orderMapper.pageQuery(dto);
+        return new PageResult<>(orders.getTotal(), orders.getResult());
+    }
+
+    /**
+     * 订单统计
+     *
+     * @return .
+     */
+    @Override
+    public OrderStatisticsVO statistics() {
+        OrderStatisticsVO statisticsVO = new OrderStatisticsVO();
+
+        Integer toBeConfirmed = orderMapper.statusCount(Orders.TO_BE_CONFIRMED);
+        Integer confirmed = orderMapper.statusCount(Orders.CONFIRMED);
+        Integer deliveryInProgress = orderMapper.statusCount(Orders.DELIVERY_IN_PROGRESS);
+
+        statisticsVO.setToBeConfirmed(toBeConfirmed);
+        statisticsVO.setConfirmed(confirmed);
+        statisticsVO.setDeliveryInProgress(deliveryInProgress);
+
+        return statisticsVO;
+    }
+
+    /**
+     * 接单
+     *
+     * @param id .
+     */
+    @Override
+    public void confirmOrder(Long id) {
+        Orders order = Orders
+                .builder()
+                .status(Orders.CONFIRMED)
+                .id(id)
+                .build();
+        orderMapper.update(order);
+    }
+
+    /**
+     * 拒单
+     *
+     * @param dto .
+     */
+    @Override
+    public void rejectOrder(OrdersRejectionDTO dto) {
+        Orders order = Orders
+                .builder()
+                .id(dto.getId())
+                .build();
+        List<Orders> orders = orderMapper.getOrders(order);
+        // 查询订单,为空抛出异常
+        if (!EmptyUtil.listEmpty(orders)) {
+            order = orders.get(0);
+            //如果订单状态为待接单，才能拒单，支付状态为已支付，则退款
+            if(Objects.equals(order.getStatus(), Orders.TO_BE_CONFIRMED)) {
+                Integer payStatus = order.getPayStatus();
+                if (Objects.equals(payStatus, Orders.PAID)) {
+                    // 调用支付宝退款接口
+                    alipayUtil.refund(order.getNumber(), order.getAmount());
+                    log.info("拒单，金额:{}", order.getAmount());
+                }
+                // 更新订单状态为已取消，并记录拒单原因，时间
+                Orders temp = Orders
+                        .builder()
+                        .id(dto.getId())
+                        .status(Orders.CANCELLED)
+                        .rejectionReason(dto.getRejectionReason())
+                        .cancelTime(LocalDateTime.now())
+                        .payStatus(Orders.REFUND)
+                        .build();
+
+                orderMapper.update(temp);
+            }
+            else throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        } else
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+    }
+
+    /**
+     * 派送订单
+     * @param id .
+     */
+    @Override
+    public void deliverOrder(Long id) {
+        Orders order = Orders
+                .builder()
+                .status(Orders.DELIVERY_IN_PROGRESS)
+                .id(id)
+                .build();
+        orderMapper.update(order);
+    }
+
+    /**
+     * 完成订单
+     * @param id .
+     */
+    @Override
+    public void completeOrder(Long id) {
+        Orders order = Orders
+                .builder()
+                .deliveryTime(LocalDateTime.now())
+                .status(Orders.COMPLETED)
+                .id(id)
+                .build();
+
+        orderMapper.update(order);
     }
 }

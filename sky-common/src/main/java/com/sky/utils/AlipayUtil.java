@@ -42,6 +42,8 @@ public class AlipayUtil {
         log.info("merchantPrivateKey:{}", aliPayProperties.getMerchantPrivateKey());
         log.info("notifyUrl:{}", aliPayProperties.getNotifyUrl());
         log.info("gatewayHost:{}", aliPayProperties.getGatewayHost());
+
+
         Factory.setOptions(aliPayProperties.toAlipayConfig());
         String path = "./qrCode" + openid + ".png";
         //log方法参数
@@ -96,6 +98,7 @@ public class AlipayUtil {
      */
     public String getOrderStatus(String orderNumber) {
         log.info("开始查询支付宝订单状态：{}", orderNumber);
+
         Factory.setOptions(aliPayProperties.toAlipayConfig());
         try {
             // 调用支付宝API查询订单状态
@@ -128,6 +131,9 @@ public class AlipayUtil {
     public boolean refund(String orderNumber, BigDecimal refundAmount) {
         log.info("开始申请支付宝退款，订单号：{}，退款金额：{}",
                 orderNumber, refundAmount);
+
+        Factory.setOptions(aliPayProperties.toAlipayConfig());
+
         try {
             // 调用支付宝API申请退款
             AlipayTradeRefundResponse response =
