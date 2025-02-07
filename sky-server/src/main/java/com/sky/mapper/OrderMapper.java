@@ -47,4 +47,16 @@ public interface OrderMapper {
      * @return .
      */
     Integer statusCount(Integer orderStatus);
+
+    /**
+     * 得到超时订单
+     */
+    List<Orders> getTimeOutOrders();
+
+    /**
+     * 根据订单状态查询订单
+     * @param status .
+     * @return .
+     */
+    List<Orders> getOrdersByStatus(Integer status);
 }

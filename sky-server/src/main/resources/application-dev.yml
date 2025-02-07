@@ -13,6 +13,7 @@ sky:
     endpoint: oss-cn-hangzhou.aliyuncs.com
     bucket-name: sky-take-out-zank1
   alipay:
+    # 支付宝支付回调地址（内网穿透）
     notify-url: http://49906452.r11.cpolar.top/notify
   bcrypt:
     # bcrypt加密算法的盐值，盐值越大破解越难，验证也需要更久的时间，默认为12

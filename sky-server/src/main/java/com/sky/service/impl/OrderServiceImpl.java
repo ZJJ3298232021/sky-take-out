@@ -493,15 +493,22 @@ public class OrderServiceImpl implements OrderService {
      * @param destination 目的地址
      */
     private void calculateDistance(String origin, String destination) {
+        // 参数封装
         Map<String, String> params = new HashMap<>();
         params.put("key", amap_key);
         params.put("origins", origin);
         params.put("destination", destination);
+
+        // 请求距离
         String distanceJson = HttpClientUtil.doGet(ThirdPartyConstant.DISTANCE_URL, params);
         JsonElement distanceJsonElement = gson.fromJson(distanceJson, JsonElement.class);
+
+        //解析失败，抛出异常
         if (distanceJsonElement.getAsJsonObject().get("status").getAsString().equals("0")) {
             throw new OrderBusinessException(MessageConstant.DISTANCE_CALCULATION_FAILED);
         }
+
+        //判断距离是否超过5公里，超过则抛出异常
         if (distanceJsonElement
                 .getAsJsonObject()
                 .get("results")
