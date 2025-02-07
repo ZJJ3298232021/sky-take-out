@@ -44,7 +44,7 @@ public class AliOssUtil {
             StringBuilder stringBuilder = new StringBuilder("https://");
             stringBuilder.append(bucketName).append(".").append(endpoint).append("/").append(objectName);
 
-            log.info("文件上传到: {}", stringBuilder.toString());
+            log.info("文件上传到: {}", stringBuilder);
             return stringBuilder.toString();
         } catch (OSSException oe) {
             log.error("Caught an OSSException, which means your request made it to OSS, but was rejected with an error response for some reason.", oe);

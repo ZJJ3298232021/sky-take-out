@@ -30,9 +30,10 @@ public class AlipayUtil {
 
     /**
      * 获取支付宝二维码Base64
+     *
      * @param orderNumber 订单号
-     * @param openid 微信用户唯一标识
-     * @param amount 订单金额
+     * @param openid      微信用户唯一标识
+     * @param amount      订单金额
      * @return 二维码Base64
      */
     public String getQrCodeInBase64(String orderNumber, String openid, BigDecimal amount) {
@@ -124,7 +125,8 @@ public class AlipayUtil {
 
     /**
      * 申请退款
-     * @param orderNumber 商户订单号
+     *
+     * @param orderNumber  商户订单号
      * @param refundAmount 退款金额
      * @return 是否退款成功
      */

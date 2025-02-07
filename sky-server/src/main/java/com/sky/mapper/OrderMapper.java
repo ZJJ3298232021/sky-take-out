@@ -19,6 +19,7 @@ public interface OrderMapper {
 
     /**
      * 查询订单(有参数皆为条件）
+     *
      * @param orders .
      * @return .
      */
@@ -26,12 +27,14 @@ public interface OrderMapper {
 
     /**
      * 更新订单信息
+     *
      * @param order .
      */
     void update(Orders order);
 
     /**
      * 分页查询订单
+     *
      * @param orders .
      * @return .
      */
@@ -39,6 +42,7 @@ public interface OrderMapper {
 
     /**
      * 统计订单状态数量
+     *
      * @param orderStatus 订单状态
      * @return .
      */

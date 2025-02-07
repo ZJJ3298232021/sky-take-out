@@ -57,6 +57,10 @@ sky:
   wechat:
     appid: ${sky.wechat.appid}
     secret: ${sky.wechat.secret}
+  amap:
+    api-key: ${sky.amap.api-key}
+  shop:
+    address: ${sky.shop.address}
 
 
 # springdoc-openapi项目访问访问地址: http://127.0.0.1:8080/doc.html

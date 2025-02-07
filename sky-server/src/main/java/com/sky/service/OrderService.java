@@ -15,7 +15,7 @@ public interface OrderService {
      * @param dto .
      * @return .
      */
-    public OrderSubmitVO submitOrder(OrdersSubmitDTO dto);
+    OrderSubmitVO submitOrder(OrdersSubmitDTO dto);
 
     /**
      * 支付订单
@@ -26,7 +26,7 @@ public interface OrderService {
     String pay(OrdersPaymentDTO paymentDTO);
 
     /**
-     *交易最后状态，判断是否成功
+     * 交易最后状态，判断是否成功
      *
      * @param tradeStatus .
      */
@@ -34,12 +34,14 @@ public interface OrderService {
 
     /**
      * 查询订单支付状态
+     *
      * @param orderId .
      */
     Integer getPayStatus(Long orderId);
 
     /**
      * 历史订单分页查询
+     *
      * @param dto .
      * @return .
      */
@@ -47,6 +49,7 @@ public interface OrderService {
 
     /**
      * 订单详情
+     *
      * @param id 订单ID
      * @return .
      */
@@ -54,18 +57,21 @@ public interface OrderService {
 
     /**
      * 取消订单
+     *
      * @param dto .
      */
     void cancelOrder(OrdersCancelDTO dto);
 
     /**
      * 再来一单
+     *
      * @param id 订单ID
      */
     void oneMoreOrder(Long id);
 
     /**
      * 条件搜索订单
+     *
      * @param dto .
      * @return .
      */
@@ -73,30 +79,35 @@ public interface OrderService {
 
     /**
      * 统计订单数据
+     *
      * @return .
      */
     OrderStatisticsVO statistics();
 
     /**
      * 接单
+     *
      * @param id .
      */
     void confirmOrder(Long id);
 
     /**
      * 拒单
+     *
      * @param dto .
      */
     void rejectOrder(OrdersRejectionDTO dto);
 
     /**
      * 派送订单
+     *
      * @param id .
      */
     void deliverOrder(Long id);
 
     /**
      * 完成订单
+     *
      * @param id .
      */
     void completeOrder(Long id);

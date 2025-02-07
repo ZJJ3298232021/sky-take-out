@@ -20,6 +20,10 @@ sky:
   wechat:
     appid: ${WX_APPID}
     secret: ${WX_APPSECRET}
+  amap:
+    api-key: ${AMAP_API_KEY}
+  shop:
+    address: 江西省南昌市红谷滩区丰和南大道696号20栋626
 mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

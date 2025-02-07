@@ -12,14 +12,14 @@ public interface ShoppingCartService {
      *
      * @param dto .
      */
-    public void addToCart(ShoppingCartDTO dto);
+    void addToCart(ShoppingCartDTO dto);
 
     /**
      * 查看购物车
      *
      * @return .
      */
-    public List<ShoppingCart> getCart();
+    List<ShoppingCart> getCart();
 
     /**
      * 减少购物车菜品数量

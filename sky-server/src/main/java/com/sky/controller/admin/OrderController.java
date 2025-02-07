@@ -27,6 +27,7 @@ public class OrderController {
 
     /**
      * 订单条件搜索
+     *
      * @param dto .
      * @return .
      */
@@ -40,6 +41,7 @@ public class OrderController {
 
     /**
      * 各个状态订单数量信息
+     *
      * @return .
      */
     @GetMapping("/statistics")
@@ -51,6 +53,7 @@ public class OrderController {
 
     /**
      * 查询订单详情
+     *
      * @param id 订单ID
      * @return .
      */
@@ -63,6 +66,7 @@ public class OrderController {
 
     /**
      * 接单
+     *
      * @param dto .
      * @return .
      */
@@ -76,6 +80,7 @@ public class OrderController {
 
     /**
      * 拒单
+     *
      * @param dto .
      * @return .
      */
@@ -89,6 +94,7 @@ public class OrderController {
 
     /**
      * 取消订单
+     *
      * @param dto .
      * @return .
      */
@@ -102,6 +108,7 @@ public class OrderController {
 
     /**
      * 派送订单
+     *
      * @param id .
      * @return .
      */

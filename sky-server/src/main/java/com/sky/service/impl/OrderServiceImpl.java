@@ -2,7 +2,10 @@ package com.sky.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.sky.constant.MessageConstant;
+import com.sky.constant.ThirdPartyConstant;
 import com.sky.constant.TradeStatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.*;
@@ -18,23 +21,35 @@ import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.AlipayUtil;
 import com.sky.utils.EmptyUtil;
+import com.sky.utils.HttpClientUtil;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
+
+    @Value("${sky.amap.api-key}")
+    private String amap_key;
+
+    @Value("${sky.shop.address}")
+    private String shop_location;
+
+    private final Gson gson;
 
     private final OrderMapper orderMapper;
 
@@ -62,6 +77,10 @@ public class OrderServiceImpl implements OrderService {
         if (Objects.isNull(address)) {
             throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
         }
+        checkRange(address.getProvinceName() +
+                address.getCityName() +
+                address.getDistrictName() +
+                address.getDetail());
 
         //判断购物车是否为空，不为空，则清空购物车
         ShoppingCart shoppingCart = ShoppingCart
@@ -249,6 +268,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 取消订单
+     *
      * @param dto .
      */
     @Override
@@ -368,7 +388,7 @@ public class OrderServiceImpl implements OrderService {
         if (!EmptyUtil.listEmpty(orders)) {
             order = orders.get(0);
             //如果订单状态为待接单，才能拒单，支付状态为已支付，则退款
-            if(Objects.equals(order.getStatus(), Orders.TO_BE_CONFIRMED)) {
+            if (Objects.equals(order.getStatus(), Orders.TO_BE_CONFIRMED)) {
                 Integer payStatus = order.getPayStatus();
                 if (Objects.equals(payStatus, Orders.PAID)) {
                     // 调用支付宝退款接口
@@ -386,14 +406,14 @@ public class OrderServiceImpl implements OrderService {
                         .build();
 
                 orderMapper.update(temp);
-            }
-            else throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+            } else throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         } else
             throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
     }
 
     /**
      * 派送订单
+     *
      * @param id .
      */
     @Override
@@ -408,6 +428,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 完成订单
+     *
      * @param id .
      */
     @Override
@@ -420,5 +441,77 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(order);
+    }
+
+    /**
+     * 检查用户地址是否超出配送范围
+     *
+     * @param userLocation 用户地址
+     */
+    private void checkRange(String userLocation) {
+        String userGeo = getGeo(userLocation);
+        String shopGeo = getGeo(shop_location);
+        calculateDistance(userGeo, shopGeo);
+    }
+
+    /**
+     * 根据地址获取经纬度
+     *
+     * @param address 地址
+     * @return 经纬度  示例：116.301392,40.050897
+     */
+    private String getGeo(String address) {
+        Map<String, String> params = new HashMap<>();
+        //参数封装
+        params.put("key", amap_key);
+        params.put("address", address);
+
+        //请求位置
+        String locationJson = HttpClientUtil.doGet(ThirdPartyConstant.GEOCODER_URL, params);
+        JsonElement locationJsonElement = gson.fromJson(locationJson, JsonElement.class);
+
+        //解析失败，抛出异常
+        if (locationJsonElement.getAsJsonObject().get("status").getAsString().equals("0")) {
+            throw new OrderBusinessException(MessageConstant.USER_ADDRESS_ANALYSIS_FAILED);
+        }
+
+        //返回经纬度  示例：116.301392,40.050897
+        return locationJsonElement
+                .getAsJsonObject()
+                .get("geocodes")
+                .getAsJsonArray()
+                .get(0)
+                .getAsJsonObject()
+                .get("location")
+                .getAsString();
+    }
+
+    /**
+     * 距离计算
+     *
+     * @param origin      原地址
+     * @param destination 目的地址
+     */
+    private void calculateDistance(String origin, String destination) {
+        Map<String, String> params = new HashMap<>();
+        params.put("key", amap_key);
+        params.put("origins", origin);
+        params.put("destination", destination);
+        String distanceJson = HttpClientUtil.doGet(ThirdPartyConstant.DISTANCE_URL, params);
+        JsonElement distanceJsonElement = gson.fromJson(distanceJson, JsonElement.class);
+        if (distanceJsonElement.getAsJsonObject().get("status").getAsString().equals("0")) {
+            throw new OrderBusinessException(MessageConstant.DISTANCE_CALCULATION_FAILED);
+        }
+        if (distanceJsonElement
+                .getAsJsonObject()
+                .get("results")
+                .getAsJsonArray()
+                .get(0)
+                .getAsJsonObject()
+                .get("distance")
+                .getAsInt()
+                > 5000) {
+            throw new OrderBusinessException(MessageConstant.DISTANCE_OUT_OF_RANGE);
+        }
     }
 }
