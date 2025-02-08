@@ -25,9 +25,9 @@ sky:
     api-key: ${AMAP_API_KEY}
   shop:
     address: 江西省南昌市红谷滩区丰和南大道696号20栋626
-mybatis:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#mybatis:
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 spring:
   data:
     redis:

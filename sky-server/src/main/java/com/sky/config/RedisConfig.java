@@ -11,6 +11,11 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 @Slf4j
 public class RedisConfig {
 
+    /**
+     * 创建RedisTemplate对象, 并设置RedisConnectionFactory
+     * @param redisConnectionFactory Redis连接工厂
+     * @return .
+     */
     @Bean
     public RedisTemplate<?, ?> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         log.info("开始创建RedisTemplate对象");

@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDateTime;
 
+/**
+ * Gson 配置类 解决LocalDateTime序列化问题
+ */
 @Configuration
 public class GsonConfig {
     @Bean

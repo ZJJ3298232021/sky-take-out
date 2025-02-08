@@ -18,6 +18,8 @@ import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
 import com.sky.result.PageResult;
+import com.sky.result.SocketResult;
+import com.sky.server.SocketServer;
 import com.sky.service.OrderService;
 import com.sky.utils.AlipayUtil;
 import com.sky.utils.EmptyUtil;
@@ -62,6 +64,8 @@ public class OrderServiceImpl implements OrderService {
     private final AlipayUtil alipayUtil;
 
     private final UserMapper userMapper;
+
+    public final SocketServer server;
 
     /**
      * 提交订单
@@ -180,6 +184,21 @@ public class OrderServiceImpl implements OrderService {
             case TradeStatusConstant.SUCCESS, TradeStatusConstant.FINISHED: {
                 order.setStatus(Orders.TO_BE_CONFIRMED);
                 order.setPayStatus(Orders.PAID);
+
+                //websocket通知
+                Orders temp = Orders.builder().number(outTradeNo).build();
+                List<Orders> orders = orderMapper.getOrders(temp);
+                if (!EmptyUtil.listEmpty(orders)) {
+                    Orders tempOrder = orders.get(0);
+                    server.sendToAll(
+                            gson.toJson(SocketResult
+                                    .builder()
+                                    .type(1)
+                                    .orderId(tempOrder.getId())
+                                    .content("订单号:"+outTradeNo)
+                            )
+                    );
+                } else throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
                 break;
             }
             case TradeStatusConstant.PAYING, TradeStatusConstant.CLOSED: {
@@ -441,6 +460,29 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(order);
+    }
+
+    /**
+     * 催单
+     * @param id .
+     */
+    @Override
+    public void reminder(Long id) {
+        List<Orders> orders = orderMapper.getOrders(Orders.builder().id(id).build());
+        if (!EmptyUtil.listEmpty(orders)) {
+            Orders order = orders.get(0);
+            if (Objects.equals(order.getStatus(), Orders.TO_BE_CONFIRMED)) {
+                server.sendToAll(
+                        gson.toJson(
+                                SocketResult
+                                        .builder()
+                                        .orderId(id)
+                                        .type(2)
+                                        .content("订单号:"+order.getNumber())
+                        )
+                );
+            } else throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        } else throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
     }
 
     /**
