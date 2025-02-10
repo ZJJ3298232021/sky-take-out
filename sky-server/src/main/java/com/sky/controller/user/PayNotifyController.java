@@ -24,9 +24,10 @@ public class PayNotifyController {
      * @param request .
      * @return .
      */
-    //TODO 参数封装
+    // deprecatedTODO 参数封装
     @PostMapping
     public String payNotify(HttpServletRequest request) {
+        log.info("支付回调");
         orderService.tradeStatus(request.getParameter("trade_status"), request.getParameter("out_trade_no"));
         return "success";
     }

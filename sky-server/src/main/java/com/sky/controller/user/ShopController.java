@@ -31,6 +31,7 @@ public class ShopController {
             log.info("获取店铺营业状态：{}", status.equals("1") ? "营业" : "打样");
             return Result.success(Integer.parseInt(status));
         }
+        redisTemplate.opsForValue().set(KEY, "0");
         return Result.error("获取失败");
     }
 }
