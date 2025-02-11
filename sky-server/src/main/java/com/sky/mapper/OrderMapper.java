@@ -45,10 +45,10 @@ public interface OrderMapper {
     /**
      * 统计订单状态数量
      *
-     * @param orderStatus 订单状态
+     * @param status 订单状态
      * @return .
      */
-    Integer statusCount(Integer orderStatus);
+    Integer statusCount(Integer status, String date);
 
     /**
      * 得到超时订单

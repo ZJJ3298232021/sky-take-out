@@ -142,7 +142,14 @@
     <select id="statusCount" resultType="java.lang.Integer">
         select COUNT(*)
         from orders
-        where status = #{status}
+        <where>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="date != null">
+                and DATE(order_time) = #{date}
+            </if>
+        </where>
     </select>
     <select id="getTimeOutOrders" resultType="com.sky.entity.Orders">
         select id,

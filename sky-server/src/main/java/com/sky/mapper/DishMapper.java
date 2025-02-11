@@ -93,4 +93,12 @@ public interface DishMapper {
      * @return .
      */
     List<Dish> list(Dish dish);
+
+    /**
+     * 根据条件统计菜品数量
+     * @param status .
+     * @param categoryId .
+     * @return .
+     */
+    Integer getDishCount(Integer status, Long categoryId);
 }

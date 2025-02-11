@@ -82,4 +82,12 @@ public interface SetmealMapper {
             "from setmeal_dish sd left join dish d on sd.dish_id = d.id " +
             "where sd.setmeal_id = #{setmealId}")
     List<DishItemVO> getDishItemBySetmealId(Long setmealId);
+
+    /**
+     * 根据条件统计套餐数量
+     * @param status .
+     * @param categoryId .
+     * @return .
+     */
+    Integer getSetmealCount(Integer status, Long categoryId);
 }

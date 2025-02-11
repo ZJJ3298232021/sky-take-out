@@ -152,16 +152,14 @@ public class OrderServiceImpl implements OrderService {
                 .build()
         );
         Orders order = orders.get(0);
+
         //生成二维码
-        String codeInBase64 = alipayUtil.getQrCodeInBase64(
+
+        return alipayUtil.getQrCodeInBase64(
                 order.getNumber(),
                 openid,
                 order.getAmount()
         );
-        //微信支付的话，这里判断是否订单已支付，但是支付宝沙箱做不到，所以暂时不判断
-
-
-        return codeInBase64;
     }
 
     /**
@@ -365,9 +363,9 @@ public class OrderServiceImpl implements OrderService {
     public OrderStatisticsVO statistics() {
         OrderStatisticsVO statisticsVO = new OrderStatisticsVO();
 
-        Integer toBeConfirmed = orderMapper.statusCount(Orders.TO_BE_CONFIRMED);
-        Integer confirmed = orderMapper.statusCount(Orders.CONFIRMED);
-        Integer deliveryInProgress = orderMapper.statusCount(Orders.DELIVERY_IN_PROGRESS);
+        Integer toBeConfirmed = orderMapper.statusCount(Orders.TO_BE_CONFIRMED, null);
+        Integer confirmed = orderMapper.statusCount(Orders.CONFIRMED, null);
+        Integer deliveryInProgress = orderMapper.statusCount(Orders.DELIVERY_IN_PROGRESS, null);
 
         statisticsVO.setToBeConfirmed(toBeConfirmed);
         statisticsVO.setConfirmed(confirmed);
