@@ -200,6 +200,9 @@
                tableware_status
         from orders where status = #{status}
     </select>
+    <select id="getTurnover" resultType="java.lang.Float">
+        select SUM(amount) from orders where DATE_FORMAT(order_time, '%Y-%m-%d') = #{date} and status = 5;
+    </select>
 
 
 </mapper>

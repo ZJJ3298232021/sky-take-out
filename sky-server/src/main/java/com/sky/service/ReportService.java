@@ -4,6 +4,9 @@ import com.sky.vo.TurnoverReportVO;
 
 import java.time.LocalDate;
 
+/**
+ * 数据统计相关接口
+ */
 public interface ReportService {
 
     /**

@@ -59,4 +59,11 @@ public interface OrderMapper {
      * @return .
      */
     List<Orders> getOrdersByStatus(Integer status);
+
+    /**
+     * 根据日期统计营业额
+     * @param date .
+     * @return .
+     */
+    Float getTurnover(String date);
 }
