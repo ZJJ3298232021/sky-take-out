@@ -1,9 +1,11 @@
 package com.sky.service.impl;
 
+import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
 import com.sky.utils.TimeUtil;
+import com.sky.vo.OrderReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,15 +57,16 @@ public class ReportServiceImpl implements ReportService {
 
         return TurnoverReportVO
                 .builder()
-                .turnoverList(StringUtils.join(turnoverList,","))
-                .dateList(StringUtils.join(intervalDates,","))
+                .turnoverList(StringUtils.join(turnoverList, ","))
+                .dateList(StringUtils.join(intervalDates, ","))
                 .build();
     }
 
     /**
      * 用户统计
+     *
      * @param begin 起始时间
-     * @param end 结束时间
+     * @param end   结束时间
      * @return .
      */
     @Override
@@ -92,9 +96,63 @@ public class ReportServiceImpl implements ReportService {
                 .build();
     }
 
+    /**
+     * 订单统计
+     *
+     * @param begin 起始时间
+     * @param end   结束时间
+     * @return .
+     */
+    @Override
+    public OrderReportVO getOrderStatistics(LocalDate begin, LocalDate end) {
+
+
+        List<String> intervalDates = TimeUtil.getIntervalDates(begin, end);
+        List<String> orderCountList = new ArrayList<>();
+        List<String> validOrderCountList = new ArrayList<>();
+        int totalOrderCount = 0;
+        int validOrderCount = 0;
+        double orderCompletionRate;
+
+        //遍历日期集合，获取每个日期的订单数量和有效订单数量
+        for (String date : intervalDates) {
+
+            HashMap<String, String> map = new HashMap<>();
+            map.put("date", date);
+
+            //获取订单数量
+            Integer count = orderMapper.getOrderCount(map);
+            count = Objects.isNull(count) ? 0 : count;
+            orderCountList.add(String.valueOf(count));
+            totalOrderCount+=count;
+
+            //获取有效订单数量
+            map.put("status", String.valueOf(Orders.COMPLETED));
+            Integer count1 = orderMapper.getOrderCount(map);
+            count1 = Objects.isNull(count1) ? 0 : count1;
+            validOrderCountList.add(String.valueOf(count1));
+            validOrderCount += count1;
+
+        }
+
+        //计算订单完成率
+        orderCompletionRate = validOrderCount / (double) totalOrderCount;
+
+        return OrderReportVO
+                .builder()
+                .orderCompletionRate(orderCompletionRate)
+                .validOrderCount(validOrderCount)
+                .totalOrderCount(totalOrderCount)
+                .dateList(StringUtils.join(intervalDates, ","))
+                .orderCountList(StringUtils.join(orderCountList, ","))
+                .validOrderCountList(StringUtils.join(validOrderCountList, ","))
+                .build();
+    }
+
 
     /**
      * 将List<String>转换为格式化的String
+     *
      * @param list .
      * @return .
      */
