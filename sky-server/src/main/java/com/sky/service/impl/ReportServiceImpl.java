@@ -1,8 +1,11 @@
 package com.sky.service.impl;
 
 import com.sky.mapper.OrderMapper;
+import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
+import com.sky.utils.TimeUtil;
 import com.sky.vo.TurnoverReportVO;
+import com.sky.vo.UserReportVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +23,8 @@ public class ReportServiceImpl implements ReportService {
 
     public final OrderMapper orderMapper;
 
+    public final UserMapper userMapper;
+
     /**
      * 营业额统计
      *
@@ -36,7 +41,7 @@ public class ReportServiceImpl implements ReportService {
         //select COUNT(*) from orders where DATE_FORMAT(order_time, '%Y-%m-%d') = #{date} and status = 5;
 
         //获取指定日期区间内的日期
-        List<String> intervalDates = getIntervalDates(begin, end);
+        List<String> intervalDates = TimeUtil.getIntervalDates(begin, end);
         List<String> turnoverList = new ArrayList<>();
 
         //遍历日期集合，获取每个日期的营业额
@@ -55,20 +60,38 @@ public class ReportServiceImpl implements ReportService {
     }
 
     /**
-     * 获取指定日期区间内的日期
-     *
-     * @param begin 开始日期
-     * @param end   结束日期
-     * @return 日期区间内的日期
+     * 用户统计
+     * @param begin 起始时间
+     * @param end 结束时间
+     * @return .
      */
-    private List<String> getIntervalDates(LocalDate begin, LocalDate end) {
-        List<String> list = new ArrayList<>();
-        while (!begin.isAfter(end)) {
-            list.add(begin.toString());
-            begin = begin.plusDays(1);
-        }
-        return list;
+    @Override
+    public UserReportVO getUserStatistics(LocalDate begin, LocalDate end) {
+
+        //select COUNT(*) from user where DATE(create_time) < DATE_ADD('2025-02-01', INTERVAL 1 DAY );
+
+        //select COUNT(*) from user where DATE(create_time) = #{date}
+
+        List<String> intervalDates = TimeUtil.getIntervalDates(begin, end);
+        List<String> newUserList = new ArrayList<>();
+        List<String> totalUserList = new ArrayList<>();
+
+        //遍历日期集合，获取每个日期的新增用户和总用户
+        intervalDates.forEach(date -> {
+            Integer totalUser = userMapper.getTotalUser(date);
+            Integer newUser = userMapper.getNewUser(date);
+            totalUserList.add(Objects.isNull(totalUser) ? "0" : String.valueOf(totalUser));
+            newUserList.add(Objects.isNull(newUser) ? "0" : String.valueOf(newUser));
+        });
+
+        return UserReportVO
+                .builder()
+                .newUserList(StringUtils.join(newUserList, ","))
+                .dateList(StringUtils.join(intervalDates, ","))
+                .totalUserList(StringUtils.join(totalUserList, ","))
+                .build();
     }
+
 
     /**
      * 将List<String>转换为格式化的String

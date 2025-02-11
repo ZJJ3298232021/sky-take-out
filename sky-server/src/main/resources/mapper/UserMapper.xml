@@ -8,4 +8,12 @@
             (openid, name, phone, sex, id_number, avatar, create_time)
         values (#{openid}, #{name}, #{phone}, #{sex}, #{idNumber}, #{avatar}, #{createTime})
     </insert>
+    <select id="getTotalUser" resultType="java.lang.Integer">
+        select COUNT(*)
+        from user
+        where DATE(create_time) &lt; DATE_ADD(#{date}, INTERVAL 1 DAY)
+    </select>
+    <select id="getNewUser" resultType="java.lang.Integer">
+        select COUNT(*) from user where DATE(create_time) = #{date}
+    </select>
 </mapper>

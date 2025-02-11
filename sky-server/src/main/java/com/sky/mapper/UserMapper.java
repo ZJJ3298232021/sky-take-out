@@ -30,4 +30,18 @@ public interface UserMapper {
      */
     @Select("select id, openid, name, phone, sex, id_number, avatar, create_time from user where id = #{id}")
     User getById(Long id);
+
+    /**
+     * 根据日期查询总用户数
+     * @param date .
+     * @return .
+     */
+    Integer getTotalUser(String date);
+
+    /**
+     * 根据日期查询新增用户数
+     * @param date .
+     * @return .
+     */
+    Integer getNewUser(String date);
 }
