@@ -1,11 +1,13 @@
 package com.sky.service.impl;
 
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
 import com.sky.utils.TimeUtil;
 import com.sky.vo.OrderReportVO;
+import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -106,7 +109,6 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public OrderReportVO getOrderStatistics(LocalDate begin, LocalDate end) {
 
-
         List<String> intervalDates = TimeUtil.getIntervalDates(begin, end);
         List<String> orderCountList = new ArrayList<>();
         List<String> validOrderCountList = new ArrayList<>();
@@ -149,19 +151,27 @@ public class ReportServiceImpl implements ReportService {
                 .build();
     }
 
-
     /**
-     * 将List<String>转换为格式化的String
-     *
-     * @param list .
+     * 销量排名前十
+     * @param begin 起始时间
+     * @param end 结束时间
      * @return .
      */
-    @Deprecated
-    private String listToString(List<String> list) {
-        StringBuilder sb = new StringBuilder();
-        for (String s : list) {
-            sb.append(s).append(",");
-        }
-        return sb.toString();
+    @Override
+    public SalesTop10ReportVO getTop10Dishes(LocalDate begin, LocalDate end) {
+        List<GoodsSalesDTO> top10Dishes = orderMapper.getTop10Dishes(begin.toString(), end.toString());
+
+        return SalesTop10ReportVO
+                .builder()
+                .nameList(StringUtils.join(top10Dishes
+                        .stream()
+                        .map(GoodsSalesDTO::getName)
+                        .collect(Collectors.toList()), ","))
+                .numberList(StringUtils.join(top10Dishes
+                        .stream()
+                        .map(GoodsSalesDTO::getCopies)
+                        .collect(Collectors.toList()), ","))
+                .build();
     }
+
 }

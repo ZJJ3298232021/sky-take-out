@@ -217,7 +217,18 @@
             </if>
         </where>
     </select>
-
+    <select id="getTop10Dishes" resultType="com.sky.dto.GoodsSalesDTO">
+        select SUM(number) copies, name
+        from order_detail
+        where order_id in (select id
+                        from orders
+                        where status = 5
+                            and DATE(order_time) &lt;= #{end}
+                            and DATE(order_time) &gt;= #{begin})
+        group by name
+        order by copies desc
+        limit 10;
+    </select>
 
 
 </mapper>
