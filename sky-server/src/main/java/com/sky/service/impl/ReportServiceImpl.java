@@ -5,22 +5,24 @@ import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
+import com.sky.service.WorkspaceService;
 import com.sky.utils.TimeUtil;
-import com.sky.vo.OrderReportVO;
-import com.sky.vo.SalesTop10ReportVO;
-import com.sky.vo.TurnoverReportVO;
-import com.sky.vo.UserReportVO;
+import com.sky.vo.*;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.sky.utils.NumberUtil.remain2Decimal;
 
 @Service
 @Slf4j
@@ -30,6 +32,9 @@ public class ReportServiceImpl implements ReportService {
     public final OrderMapper orderMapper;
 
     public final UserMapper userMapper;
+
+    public final WorkspaceService workspaceService;
+
 
     /**
      * 营业额统计
@@ -126,7 +131,7 @@ public class ReportServiceImpl implements ReportService {
             Integer count = orderMapper.getOrderCount(map);
             count = Objects.isNull(count) ? 0 : count;
             orderCountList.add(String.valueOf(count));
-            totalOrderCount+=count;
+            totalOrderCount += count;
 
             //获取有效订单数量
             map.put("status", String.valueOf(Orders.COMPLETED));
@@ -153,8 +158,9 @@ public class ReportServiceImpl implements ReportService {
 
     /**
      * 销量排名前十
+     *
      * @param begin 起始时间
-     * @param end 结束时间
+     * @param end   结束时间
      * @return .
      */
     @Override
@@ -174,4 +180,125 @@ public class ReportServiceImpl implements ReportService {
                 .build();
     }
 
+    /**
+     * 导出数据
+     *
+     * @param response .
+     */
+    @Override
+    public void exportData(HttpServletResponse response) {
+        //获取30天前日期
+        LocalDate start = LocalDate.now().minusDays(30);
+
+        //30天数据概览
+        BusinessDataVO business30Data = new BusinessDataVO();
+
+        //30天订单总数
+        int totalOrderCount = 0;
+
+        //30天数据列表详细
+        List<BusinessDataVO> business30List = new ArrayList<>();
+        //30天日期
+        List<String> date30List = TimeUtil.getIntervalDates(start, LocalDate.now());
+
+        //获取30天数据
+        while (!start.isAfter(LocalDate.now())) {
+            business30List.add(workspaceService.getBusinessData(start.toString()));
+            totalOrderCount += orderMapper.getOrderCount(Map.of("date", start.toString()));
+            start = start.plusDays(1);
+        }
+
+        //根据每天数据计算30天数据
+        business30Data.setValidOrderCount(
+                business30List
+                        .stream()
+                        .mapToInt(BusinessDataVO::getValidOrderCount)
+                        .sum()
+        );
+        business30Data.setTurnover(
+                remain2Decimal(business30List
+                        .stream()
+                        .mapToDouble(BusinessDataVO::getTurnover)
+                        .sum())
+        );
+        business30Data.setNewUsers(
+                business30List
+                        .stream()
+                        .mapToInt(BusinessDataVO::getNewUsers)
+                        .sum()
+        );
+
+        //计算客单价和订单完成率
+        if (business30Data.getValidOrderCount() != 0 && totalOrderCount != 0) {
+            business30Data.setUnitPrice(
+                    remain2Decimal(business30Data.getTurnover() / business30Data.getValidOrderCount())
+            );
+            business30Data.setOrderCompletionRate(
+                    remain2Decimal(business30Data.getValidOrderCount() / (double) totalOrderCount)
+            );
+        }
+
+        //开始写入 easyexcel
+        writeExcel(response, business30List, date30List, business30Data);
+    }
+
+    /**
+     * 写入excel
+     *
+     * @param response       .
+     * @param business30List 30天数据列表
+     * @param date30List     30天日期列表
+     * @param business30Data 30天数据概览
+     */
+    private void writeExcel(
+            HttpServletResponse response,
+            List<BusinessDataVO> business30List,
+            List<String> date30List,
+            BusinessDataVO business30Data) {
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream("template/运营数据报表模板.xlsx");
+        try {
+            if (in != null) {
+                XSSFWorkbook excel = new XSSFWorkbook(in);
+                //获取sheet
+                XSSFSheet sheet = excel.getSheet("Sheet1");
+
+                //设置日期
+                sheet.getRow(1)
+                        .getCell(1)
+                        .setCellValue(
+                                "时间:" + date30List.get(0) + "至" + date30List.get(date30List.size() - 1)
+                        );
+
+                //设置30天数据
+                XSSFRow row3 = sheet.getRow(3);
+                row3.getCell(2).setCellValue(business30Data.getTurnover());
+                row3.getCell(4).setCellValue(business30Data.getOrderCompletionRate());
+                row3.getCell(6).setCellValue(business30Data.getNewUsers());
+
+                XSSFRow row = sheet.getRow(4);
+                row.getCell(2).setCellValue(business30Data.getValidOrderCount());
+                row.getCell(4).setCellValue(business30Data.getUnitPrice());
+
+                //设置30天明细数据
+                for (int i=7;i<30+7;i++) {
+                    XSSFRow rowx = sheet.getRow(i);
+                    rowx.getCell(1).setCellValue(date30List.get(i-7));
+                    rowx.getCell(2).setCellValue(business30List.get(i-7).getTurnover());
+                    rowx.getCell(3).setCellValue(business30List.get(i-7).getValidOrderCount());
+                    rowx.getCell(4).setCellValue(business30List.get(i-7).getOrderCompletionRate());
+                    rowx.getCell(5).setCellValue(business30List.get(i-7).getUnitPrice());
+                    rowx.getCell(6).setCellValue(business30List.get(i-7).getNewUsers());
+                }
+                response.setContentType("application/vnd.ms-excel");
+                response.setCharacterEncoding("utf-8");
+                response.setHeader("Content-disposition", "attachment;filename=report.xlsx");
+                excel.write(response.getOutputStream());
+                in.close();
+                excel.close();
+            } else throw new RuntimeException("找不到模板文件");
+        } catch (Exception e) {
+            log.error("导出数据失败", e);
+        }
+
+    }
 }

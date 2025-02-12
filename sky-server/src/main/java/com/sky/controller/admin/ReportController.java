@@ -8,6 +8,7 @@ import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -92,5 +93,15 @@ public class ReportController {
             LocalDate end) {
         log.info("获取销量前10的菜品：{} ~ {}", begin, end);
         return Result.success(reportService.getTop10Dishes(begin, end));
+    }
+
+    /**
+     * 数据导出
+     */
+    @GetMapping("/export")
+    @Operation(description = "导出数据")
+    public void exportData(HttpServletResponse response) {
+        log.info("导出数据");
+        reportService.exportData(response);
     }
 }

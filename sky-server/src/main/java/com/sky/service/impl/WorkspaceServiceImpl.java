@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+
+import static com.sky.utils.NumberUtil.remain2Decimal;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +55,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
         //营业额
         Float turnover = orderMapper.getTurnover(today);
-        turnover = turnover == null ? 0.0f : turnover;
+        turnover = Objects.isNull(turnover) ? 0.0f : turnover;
 
         //有效订单数
         map.put("status", String.valueOf(Orders.COMPLETED));
@@ -144,7 +147,4 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 .build();
     }
 
-    public double remain2Decimal(double num) {
-        return  (double) Math.round(num * 100) / 100;
-    }
 }
