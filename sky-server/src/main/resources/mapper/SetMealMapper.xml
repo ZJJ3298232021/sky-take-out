@@ -105,5 +105,6 @@
                           dish d
                      where s.dish_id = d.id
                        and d.id = #{id})
+          and status = 1
     </select>
 </mapper>

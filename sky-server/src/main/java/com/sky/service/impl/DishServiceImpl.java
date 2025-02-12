@@ -195,7 +195,7 @@ public class DishServiceImpl implements DishService {
                 .id(id)
                 .status(status)
                 .build();
-        if(setmealMapper.isDishInvolvedInStartingSetmeal(id).equals(1)) {
+        if(!Objects.isNull(setmealMapper.isDishInvolvedInStartingSetmeal(id))) {
             throw new DishDisableFailedException(MessageConstant.DISH_DISABLE_FAILED);
         }
         dishMapper.update(dish);
