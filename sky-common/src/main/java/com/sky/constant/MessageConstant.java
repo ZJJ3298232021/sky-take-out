@@ -28,4 +28,5 @@ public class MessageConstant {
     public static final String DISTANCE_CALCULATION_FAILED = "距离计算失败";
     public static final String DISTANCE_OUT_OF_RANGE = "超出最大配送范围";
     public static final String ORDER_OUT_OF_TIME = "订单已超时";
+    public static final String DISH_DISABLE_FAILED = "存在起售中的套餐包含此菜品，无法停售";
 }

@@ -2,6 +2,7 @@ package com.sky.interceptor;
 
 import com.google.gson.Gson;
 import com.sky.constant.JwtClaimsConstant;
+import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
 import com.sky.properties.JwtProperties;
 import com.sky.result.Result;
@@ -61,7 +62,7 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
             response.setStatus(401);
             response.setContentType("application/json;charset=utf-8");
             //toXdo 利用现有的Json工具替代Gson
-            response.getWriter().write(gson.toJson(Result.error("未登录")));
+            response.getWriter().write(gson.toJson(Result.error(MessageConstant.USER_NOT_LOGIN)));
             return false;
         }
     }

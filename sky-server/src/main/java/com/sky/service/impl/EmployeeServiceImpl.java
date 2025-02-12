@@ -2,7 +2,6 @@ package com.sky.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.sky.config.BcryptConfig;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
@@ -10,6 +9,7 @@ import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
+import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
@@ -17,6 +17,7 @@ import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
+import com.sky.utils.BcryptUtil;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.BeanUtils;
@@ -28,7 +29,8 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
-    private final BcryptConfig bcryptConfig;
+
+    private final BcryptUtil bcryptUtil;
 
     private final EmployeeMapper employeeMapper;
 
@@ -81,16 +83,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setStatus(StatusConstant.ENABLE);
 
         //密码加密处理
-        employee.setPassword(
-                BCrypt.hashpw(
-                        PasswordConstant.DEFAULT_PASSWORD,
-                        BCrypt.gensalt(
-                                Integer.parseInt(
-                                        bcryptConfig.getSalt()
-                                )
-                        )
-                )
-        );
+        employee.setPassword(bcryptUtil.encode(PasswordConstant.DEFAULT_PASSWORD));
         employeeMapper.save(employee);
 
     }
@@ -152,6 +145,25 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void update(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO, employee);
+        employeeMapper.update(employee);
+    }
+
+    /**
+     * 修改密码
+     * @param dto .
+     */
+    @Override
+    public void editPassword(PasswordEditDTO dto) {
+        Employee employee = employeeMapper.getById(BaseContext.getCurrentId());
+
+        //旧密码比对
+        if (!bcryptUtil.matches(dto.getOldPassword(), employee.getPassword())) {
+            throw new PasswordErrorException(MessageConstant.PASSWORD_EDIT_FAILED);
+        }
+
+        //设置新密码, 加密
+        employee.setPassword(bcryptUtil.encode(dto.getNewPassword()));
+
         employeeMapper.update(employee);
     }
 }

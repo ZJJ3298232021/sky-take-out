@@ -16,4 +16,7 @@
             #{id}
         </foreach>
     </delete>
+    <select id="getAllDishStatusLinkBySetmealId" resultType="java.lang.Integer">
+        select d.status from dish d, setmeal_dish s where d.id = s.dish_id and s.setmeal_id = #{id}
+    </select>
 </mapper>

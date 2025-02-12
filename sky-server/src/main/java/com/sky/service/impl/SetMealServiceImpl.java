@@ -9,6 +9,7 @@ import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
 import com.sky.exception.DeletionNotAllowedException;
+import com.sky.exception.SetmealEnableFailedException;
 import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
@@ -99,6 +100,11 @@ public class SetMealServiceImpl implements SetMealService {
                 .id(id)
                 .status(status)
                 .build();
+        //判断套餐中的菜品是否都处于起售状态
+        List<Integer> allDishStatus = setmealDishMapper.getAllDishStatusLinkBySetmealId(id);
+        if(!allDishStatus.stream().allMatch(dishStatus-> dishStatus.equals(StatusConstant.ENABLE))) {
+            throw new SetmealEnableFailedException(MessageConstant.SETMEAL_ENABLE_FAILED);
+        }
         setmealMapper.update(setmeal);
     }
 

@@ -97,4 +97,13 @@
             </if>
         </where>
     </select>
+    <select id="isDishInvolvedInStartingSetmeal" resultType="java.lang.Integer">
+        select 1
+        from setmeal
+        where id in (select setmeal_id
+                     from setmeal_dish s,
+                          dish d
+                     where s.dish_id = d.id
+                       and d.id = #{id})
+    </select>
 </mapper>

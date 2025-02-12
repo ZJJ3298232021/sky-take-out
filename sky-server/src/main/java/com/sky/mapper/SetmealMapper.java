@@ -90,4 +90,11 @@ public interface SetmealMapper {
      * @return .
      */
     Integer getSetmealCount(Integer status, Long categoryId);
+
+    /**
+     * 判断菜品是否关联已起售的套餐
+     * @param dishId .
+     * @return .
+     */
+    Integer isDishInvolvedInStartingSetmeal(Long dishId);
 }

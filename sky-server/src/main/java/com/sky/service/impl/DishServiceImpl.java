@@ -9,9 +9,11 @@ import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
 import com.sky.exception.DeletionNotAllowedException;
+import com.sky.exception.DishDisableFailedException;
 import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
+import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.utils.AliOssUtil;
@@ -42,6 +44,8 @@ public class DishServiceImpl implements DishService {
     private final SetmealDishMapper setmealDishMapper;
 
     private final AliOssUtil aliOssUtil;
+
+    private final SetmealMapper setmealMapper;
 
 
     /**
@@ -119,6 +123,11 @@ public class DishServiceImpl implements DishService {
         }
     }
 
+    /**
+     * 修改菜品
+     *
+     * @param dishDTO .
+     */
     @Transactional
     @Override
     public void updateDishWithFlavor(DishDTO dishDTO) {
@@ -186,6 +195,9 @@ public class DishServiceImpl implements DishService {
                 .id(id)
                 .status(status)
                 .build();
+        if(setmealMapper.isDishInvolvedInStartingSetmeal(id).equals(1)) {
+            throw new DishDisableFailedException(MessageConstant.DISH_DISABLE_FAILED);
+        }
         dishMapper.update(dish);
     }
 

@@ -42,4 +42,11 @@ public interface SetmealDishMapper {
      * @param ids .
      */
     void deleteBatchesBySetmealIds(List<Long> ids);
+
+    /**
+     * 根据套餐id查询套餐菜品关联菜品状态
+     * @param id .
+     * @return .
+     */
+    List<Integer> getAllDishStatusLinkBySetmealId(Long id);
 }
