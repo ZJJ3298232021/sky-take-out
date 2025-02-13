@@ -188,14 +188,19 @@ public class OrderServiceImpl implements OrderService {
                 List<Orders> orders = orderMapper.getOrders(temp);
                 if (!EmptyUtil.listEmpty(orders)) {
                     Orders tempOrder = orders.get(0);
-                    server.sendToAll(
-                            gson.toJson(SocketResult
-                                    .builder()
-                                    .type(1)
-                                    .orderId(tempOrder.getId())
-                                    .content("订单号:"+outTradeNo)
-                            )
-                    );
+
+                    //判断订单状态，如果状态是待支付，则发送通知
+                    if(tempOrder.getStatus().equals(Orders.PENDING_PAYMENT)) {
+                        server.sendToAll(
+                                gson.toJson(SocketResult
+                                        .builder()
+                                        .type(1)
+                                        .orderId(tempOrder.getId())
+                                        .content("订单号:"+outTradeNo)
+                                )
+                        );
+                    }
+
                 } else throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
                 break;
             }
