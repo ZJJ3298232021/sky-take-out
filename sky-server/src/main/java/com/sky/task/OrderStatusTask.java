@@ -19,6 +19,9 @@ public class OrderStatusTask {
 
     private final OrderMapper orderMapper;
 
+    /**
+     * 处理超时订单
+     */
     @Scheduled(cron = "0 * * * * ?")
     public void timeOutOrder(){
         log.info("处理超时订单");
@@ -36,6 +39,9 @@ public class OrderStatusTask {
         }
     }
 
+    /**
+     * 处理已完成订单
+     */
     @Scheduled(cron = "0 0 1 * * ?")
     public void finishedOrder(){
         log.info("检查已完成订单");

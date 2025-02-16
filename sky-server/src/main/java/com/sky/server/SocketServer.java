@@ -1,6 +1,7 @@
 package com.sky.server;
 
 import jakarta.websocket.OnClose;
+import jakarta.websocket.OnError;
 import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.PathParam;
@@ -42,6 +43,23 @@ public class SocketServer {
     public void onClose(@PathParam("cid") String cid) {
         log.info("客户端{}连接关闭", cid);
         sessionMap.remove(cid);
+    }
+
+    /**
+     * 处理由于网络错误、超时、服务器端异常等异常时调用
+     * @param throwable 异常
+     * @param session 会话
+     */
+    @OnError
+    public void onError(Throwable throwable, Session session) {
+        log.error("客户端{}发生错误", session, throwable);
+        if(session.isOpen()) {
+            try {
+                session.close();
+            } catch (IOException e) {
+                log.error("关闭连接失败", e);
+            }
+        }
     }
 
     /**
