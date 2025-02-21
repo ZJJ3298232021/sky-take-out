@@ -2,6 +2,7 @@ package com.sky.controller.admin;
 
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.constant.PathConstant;
+import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
@@ -17,6 +18,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -41,6 +44,7 @@ public class EmployeeController {
      * @param employeeLoginDTO .
      * @return .
      */
+    @CachePut(value = "emp", key = "#result.data.id")
     @Operation(description = "员工登录")
     @PostMapping("/login")
     public Result<EmployeeLoginVO> empLogin(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
@@ -71,10 +75,11 @@ public class EmployeeController {
      *
      * @return .
      */
+    @CacheEvict(value = "emp",key = "#result.data")
     @Operation(description = "员工退出")
     @PostMapping("/logout")
-    public Result<String> empLogout() {
-        return Result.success();
+    public Result<?> empLogout() {
+        return Result.success(BaseContext.getCurrentId());
     }
 
     /**
@@ -145,6 +150,7 @@ public class EmployeeController {
 
     @PutMapping("/editPassword")
     @Operation(description = "修改密码")
+    @CacheEvict(value = "emp", key = "#dto.empId")
     public Result<?> editPassword(@RequestBody PasswordEditDTO dto) {
         log.info("修改密码：{}", dto);
         employeeService.editPassword(dto);

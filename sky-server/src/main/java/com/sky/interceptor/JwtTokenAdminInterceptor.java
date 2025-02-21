@@ -7,27 +7,31 @@ import com.sky.context.BaseContext;
 import com.sky.properties.JwtProperties;
 import com.sky.result.Result;
 import com.sky.utils.JwtUtil;
+import com.sky.vo.UserLoginVO;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
+
+import java.util.Objects;
 
 /**
  * 管理员jwt令牌校验的拦截器
  */
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class JwtTokenAdminInterceptor implements HandlerInterceptor {
 
-    @Autowired
-    private JwtProperties jwtProperties;
-    @Autowired
-    private Gson gson;
+    private final JwtProperties jwtProperties;
+    private final Gson gson;
+    private final StringRedisTemplate stringRedisTemplate;
 
     /**
      * 校验jwt
@@ -35,7 +39,7 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
      * @param request  .
      * @param response .
      * @param handler  .
-     * @return boolean .
+     * @return .
      * @throws Exception .
      */
     public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws Exception {
@@ -56,15 +60,33 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
             log.info("当前员工id：{}", empId);
             //保存当前登录用户的id
             BaseContext.setCurrentId(empId);
+            String storedToken = stringRedisTemplate.opsForValue().get("sky-take-out:emp::" + empId);
+            //如果redis中没有这个token，或者token不匹配，则返回登录失败
+            if (storedToken == null) {
+                Result<?> result = gson.fromJson(storedToken, Result.class);
+                if (Objects.equals(((UserLoginVO) result.getData()).getToken(), token))
+                    throw new Exception(MessageConstant.USER_NOT_LOGIN);
+            }
             //3、通过，放行
             return true;
         } catch (Exception ex) {
-            //4、不通过，响应状态码401
-            response.setStatus(401);
-            response.setContentType("application/json;charset=utf-8");
-            //toXdo 利用现有的Json工具替代Gson
-            response.getWriter().write(gson.toJson(Result.error(MessageConstant.USER_NOT_LOGIN)));
-            return false;
+            return failed(response);
         }
+    }
+
+
+    /**
+     * 登录失败
+     *
+     * @param response .
+     * @return .
+     * @throws Exception .
+     */
+    private boolean failed(HttpServletResponse response) throws Exception {
+        //4、不通过，响应状态码401
+        response.setStatus(401);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(gson.toJson(Result.error(MessageConstant.USER_NOT_LOGIN)));
+        return false;
     }
 }
