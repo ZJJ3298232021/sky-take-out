@@ -1,13 +1,13 @@
 package com.sky.interceptor;
 
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
 import com.sky.properties.JwtProperties;
 import com.sky.result.Result;
 import com.sky.utils.JwtUtil;
-import com.sky.vo.UserLoginVO;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -62,15 +62,15 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
             BaseContext.setCurrentId(empId);
             String storedToken = stringRedisTemplate.opsForValue().get("sky-take-out:emp::" + empId);
             //如果redis中没有这个token，或者token不匹配，则返回登录失败
-            if (storedToken == null) {
-                Result<?> result = gson.fromJson(storedToken, Result.class);
-                if (Objects.equals(((UserLoginVO) result.getData()).getToken(), token))
-                    throw new Exception(MessageConstant.USER_NOT_LOGIN);
+            if (storedToken != null) {
+                Result<LinkedTreeMap<?, ?>> result = gson.fromJson(storedToken, Result.class);
+                if (!Objects.equals(result.getData().get("token"), token))
+                    failed(response,0);
             }
             //3、通过，放行
             return true;
         } catch (Exception ex) {
-            return failed(response);
+            return failed(response,1);
         }
     }
 
@@ -82,11 +82,11 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
      * @return .
      * @throws Exception .
      */
-    private boolean failed(HttpServletResponse response) throws Exception {
+    private boolean failed(HttpServletResponse response,int type) throws Exception {
         //4、不通过，响应状态码401
         response.setStatus(401);
         response.setContentType("application/json;charset=utf-8");
-        response.getWriter().write(gson.toJson(Result.error(MessageConstant.USER_NOT_LOGIN)));
+        response.getWriter().write(gson.toJson(Result.error(Objects.equals(type,1)?MessageConstant.USER_NOT_LOGIN:MessageConstant.RETRY_LOGIN)));
         return false;
     }
 }
