@@ -7,6 +7,7 @@ import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
 import com.sky.properties.JwtProperties;
 import com.sky.result.Result;
+import com.sky.utils.EmptyUtil;
 import com.sky.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -62,7 +63,7 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
             BaseContext.setCurrentId(empId);
             String storedToken = stringRedisTemplate.opsForValue().get("sky-take-out:emp::" + empId);
             //如果redis中没有这个token，或者token不匹配，则返回登录失败
-            if (storedToken != null) {
+            if (!EmptyUtil.stringEmpty(storedToken)) {
                 Result<LinkedTreeMap<?, ?>> result = gson.fromJson(storedToken, Result.class);
                 if (!Objects.equals(result.getData().get("token"), token))
                     failed(response,0);
