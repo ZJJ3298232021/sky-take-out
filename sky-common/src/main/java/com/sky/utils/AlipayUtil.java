@@ -13,6 +13,7 @@ import com.sky.exception.OrderBusinessException;
 import com.sky.properties.AlipayProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -26,6 +27,9 @@ import java.util.Base64;
 public class AlipayUtil {
 
     private final AlipayProperties aliPayProperties;
+
+    @Value("${sky.shop.name}")
+    private String shopName;
 
 
     /**
@@ -53,7 +57,7 @@ public class AlipayUtil {
         log.info("openid:{}", openid);
         try {
             AlipayTradePrecreateResponse response = Factory.Payment.FaceToFace().preCreate(
-                    "苍穹外卖点菜",
+                    shopName + "点菜",
                     orderNumber,
                     String.valueOf(amount)
             );

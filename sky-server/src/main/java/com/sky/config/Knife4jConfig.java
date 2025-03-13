@@ -18,8 +18,8 @@ public class Knife4jConfig {
                 // 指定OpenAPI版本
                 .openapi("3.0.0")
                 .info(new Info()
-                        .title("苍穹外卖项目接口文档")
-                        .description("苍穹外卖项目接口文档")
+                        .title("项目接口文档")
+                        .description("项目接口文档")
                         .version("3.0")
                         .contact(new Contact()
                                 .name("Zank")
