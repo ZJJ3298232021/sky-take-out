@@ -20,4 +20,4 @@
 
 ![小程序体验版](img.png)
 
-管理员界面[网站访问](https://sky-admin.webzank.site)
+管理员界面[网站访问（服务器过期）](https://sky-admin.webzank.site)
